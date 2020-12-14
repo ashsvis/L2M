@@ -84,7 +84,7 @@ namespace L2M
                                 Thread.Sleep(1);
                                 var list = new List<string>();
                                 for (var i = 0; i < count; i++) list.Add(string.Format("{0}", bytes[i]));
-                                //Say("Q:" + string.Join(",", list));
+                                
                                 worker.ReportProgress(0, "Q:" + string.Join(",", list));
 
                                 if (count < 6) continue;
@@ -148,8 +148,8 @@ namespace L2M
                                             var regAddr = ModifyToModbusRegisterAddress(addr, 3);
                                             ushort value = BitConverter.ToUInt16(bytes, n);
                                             SetRegisterValue(regAddr, value);
-                                            n = n + 2;
-                                            addr += 2;
+                                            n = n + 2;  // коррекция позиции смещения в принятых данных для записи
+                                            addr += 2;  // размер регистра: 2 байта
                                         }
                                         //-------------------
                                         answer = new List<byte>();
@@ -171,7 +171,7 @@ namespace L2M
                         catch (Exception ex)
                         {
                             if (!worker.CancellationPending)
-                                //TranslateChannelMessage(parameters.ChannelId, ex.Message);
+                                
                                 worker.ReportProgress(0, ex.Message);
                         }
                     });
@@ -179,7 +179,7 @@ namespace L2M
                 catch (SocketException ex)
                 {
                     if (!worker.CancellationPending)
-                        //TranslateChannelMessage(parameters.ChannelId, $"Ошибка приёма: {ex.Message}");
+                        
                         worker.ReportProgress(0, ex.Message);
                     break;
                 }
