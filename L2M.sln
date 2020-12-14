@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.757
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "L2M", "L2M.csproj", "{52A825BE-88DC-4AA3-8D44-41214C3F4827}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{52A825BE-88DC-4AA3-8D44-41214C3F4827}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52A825BE-88DC-4AA3-8D44-41214C3F4827}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52A825BE-88DC-4AA3-8D44-41214C3F4827}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{52A825BE-88DC-4AA3-8D44-41214C3F4827}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DFE97426-3C42-4796-AD11-83A0842ABCB5}
+	EndGlobalSection
+EndGlobal
