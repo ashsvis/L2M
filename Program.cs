@@ -64,8 +64,10 @@ namespace L2M
                         Thread.Sleep(500);
                         if (socket.Connected)
                         {
-                            FetchLogikaParameter(worker, socket, 1, 3, 0, 64, 1, 0, typeof(float));
-                            FetchLogikaParameter(worker, socket, 1, 3, 0, 8, 1, 2, typeof(uint));
+                            FetchLogikaParameter(socket, 1, 3, 1, 160, 1, 0, typeof(float));
+                            FetchLogikaParameter(socket, 1, 3, 0, 8, 1, 2, typeof(uint));
+                            FetchLogikaParameter(socket, 1, 3, 1, 162, 1, 4, typeof(float));
+                            FetchLogikaParameter(socket, 1, 3, 1, 163, 1, 6, typeof(float));
                         }
                     }
                 }
@@ -76,7 +78,7 @@ namespace L2M
             }
         }
 
-        private static void FetchLogikaParameter(BackgroundWorker worker, Socket socket, byte dad, byte sad, int channel, int parameter, 
+        private static void FetchLogikaParameter(Socket socket, byte dad, byte sad, int channel, int parameter, 
             byte nodeAddr, ushort startAddr, Type valueType)
         {
             socket.Send(PrepareFetchParam(dad, sad, channel, parameter));
@@ -92,7 +94,6 @@ namespace L2M
                     if (result.Dad == sad && result.Sad == dad && result.Fnc == 3 &&
                         result.Channel == channel && result.Parameter == parameter)
                     {
-                        worker.ReportProgress(0, result.ToString());
                         if (valueType == typeof(float) && 
                             float.TryParse(result.Value, NumberStyles.Float, CultureInfo.GetCultureInfo("en-US"), out float floatValue))
                         {
@@ -378,7 +379,7 @@ namespace L2M
                                 var list = new List<string>();
                                 for (var i = 0; i < count; i++) list.Add(string.Format("{0}", bytes[i]));
                                 
-                                worker.ReportProgress(0, "Q:" + string.Join(",", list));
+                                //worker.ReportProgress(0, "Q:" + string.Join(",", list));
 
                                 if (count < 6) continue;
                                 var header1 = Convert.ToUInt16(bytes[0] * 256 + bytes[1]);
@@ -407,7 +408,7 @@ namespace L2M
                                         answer.Add(funcCode);
                                         answer.Add(bytesCount);
                                         //
-                                        worker.ReportProgress(nodeAddr, $"node:{nodeAddr} func:{funcCode} addr:{startAddr} count:{regCount}");
+                                        //worker.ReportProgress(nodeAddr, $"node:{nodeAddr} func:{funcCode} addr:{startAddr} count:{regCount}");
 
                                         for (ushort i = 0; i < regCount; i++)
                                         {
