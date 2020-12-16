@@ -12,7 +12,7 @@ namespace L2M
 {
     class Program
     {
-        private static readonly ushort[] registers = new ushort[50000];
+        private static readonly ushort[,] registers = new ushort[247, 50000];
 
         private static readonly object locker = new object();
 
@@ -114,12 +114,12 @@ namespace L2M
                                         answer.Add(funcCode);
                                         answer.Add(bytesCount);
                                         //
-                                        worker.ReportProgress(0, $"node:{nodeAddr} func:{funcCode} addr:{startAddr} count:{regCount}");
+                                        worker.ReportProgress(nodeAddr, $"node:{nodeAddr} func:{funcCode} addr:{startAddr} count:{regCount}");
 
                                         for (ushort i = 0; i < regCount; i++)
                                         {
-                                            var regAddr = ModifyToModbusRegisterAddress(i, funcCode);
-                                            ushort value = GetRegisterValue(regAddr);
+                                            var regAddr = ModifyToModbusRegisterAddress((ushort)(i + startAddr), funcCode);
+                                            ushort value = GetRegisterValue(nodeAddr, regAddr);
                                             answer.AddRange(BitConverter.GetBytes(value));
                                         }
 
@@ -127,7 +127,7 @@ namespace L2M
                                         stream.Write(msg, 0, msg.Length);
                                         break;
                                     case 6: // write one register
-                                        SetRegisterValue(ModifyToModbusRegisterAddress(startAddr, 3), Swap(singleValue));
+                                        SetRegisterValue(nodeAddr, ModifyToModbusRegisterAddress(startAddr, 3), singleValue);
                                         //-------------------
                                         answer = new List<byte>();
                                         answer.AddRange(BitConverter.GetBytes(Swap(header1)));
@@ -147,9 +147,9 @@ namespace L2M
                                         {
                                             var regAddr = ModifyToModbusRegisterAddress(addr, 3);
                                             ushort value = BitConverter.ToUInt16(bytes, n);
-                                            SetRegisterValue(regAddr, value);
+                                            SetRegisterValue(nodeAddr, regAddr, value);
                                             n = n + 2;  // коррекция позиции смещения в принятых данных для записи
-                                            addr += 2;  // размер регистра: 2 байта
+                                            addr += 1;
                                         }
                                         //-------------------
                                         answer = new List<byte>();
@@ -188,19 +188,19 @@ namespace L2M
 
         }
 
-        private static ushort GetRegisterValue(ushort index)
+        private static ushort GetRegisterValue(byte node, ushort index)
         {
             lock (locker)
             {
-                return registers[index - 1];
+                return registers[node - 1, index - 1];
             }
         }
 
-        private static void SetRegisterValue(ushort index, ushort value)
+        private static void SetRegisterValue(byte node, ushort index, ushort value)
         {
             lock (locker)
             {
-                registers[index - 1] = value;
+                registers[node - 1, index - 1] = value;
             }
         }
 
@@ -229,10 +229,30 @@ namespace L2M
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Отображаем значения регистров в консоли программы
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private static void ModbusWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            if (e.ProgressPercentage == 0)
-                Console.WriteLine($"{e.UserState}");
+            if (e.ProgressPercentage != 0)
+            {
+                Console.Clear();
+                var top = 0;
+                var node = (byte)e.ProgressPercentage;
+                lock (locker)
+                {
+                    // диапазон 4хххх - для holding регистров
+                    for (var i = 40000; i < 40010; i++)
+                    {
+                        Console.SetCursorPosition(0, top++);
+                        Console.Write(Swap(registers[node - 1, i]));
+                    }
+                }
+                Console.SetCursorPosition(0, ++top);
+                Console.Write($"{e.UserState}");
+            }
         }
 
         private static void ModbusWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
