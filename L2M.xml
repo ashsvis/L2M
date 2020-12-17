@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!-- Конфигурационный файл -->
+<Config>
+  <ListenTcp>
+    <IpPort>502</IpPort>
+    <SendTimeout>3000</SendTimeout>
+    <ReceiveTimeout>3000</ReceiveTimeout>
+  </ListenTcp>
+  <Fetching>
+    <ChannelTcp>
+      <IpAddress>192.168.2.174</IpAddress>
+      <IpPort>4001</IpPort>
+      <SendTimeout>3000</SendTimeout>
+      <ReceiveTimeout>3000</ReceiveTimeout>
+      <Runtime>
+        <LogikaItem>
+          <Dad>1</Dad>
+          <Sad>3</Sad>
+          <Channel>1</Channel>
+          <Parameter>160</Parameter>
+          <ModbusNode>1</ModbusNode>
+          <HoldingRegister>0</HoldingRegister>
+          <DataFormat>IEEEFP</DataFormat>
+        </LogikaItem>
+        <LogikaItem>
+          <Dad>1</Dad>
+          <Sad>3</Sad>
+          <Channel>0</Channel>
+          <Parameter>8</Parameter>
+          <ModbusNode>1</ModbusNode>
+          <HoldingRegister>2</HoldingRegister>
+          <DataFormat>S32B</DataFormat>
+        </LogikaItem>
+        <LogikaItem>
+          <Dad>1</Dad>
+          <Sad>3</Sad>
+          <Channel>1</Channel>
+          <Parameter>162</Parameter>
+          <ModbusNode>1</ModbusNode>
+          <HoldingRegister>4</HoldingRegister>
+          <DataFormat>IEEEFP</DataFormat>
+        </LogikaItem>
+        <LogikaItem>
+          <Dad>1</Dad>
+          <Sad>3</Sad>
+          <Channel>1</Channel>
+          <Parameter>163</Parameter>
+          <ModbusNode>1</ModbusNode>
+          <HoldingRegister>6</HoldingRegister>
+          <DataFormat>IEEEFP</DataFormat>
+        </LogikaItem>
+      </Runtime>
+    </ChannelTcp>
+  </Fetching>
+</Config>

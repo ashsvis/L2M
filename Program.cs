@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using System.Xml.Linq;
 
 namespace L2M
 {
@@ -17,37 +18,139 @@ namespace L2M
         static void Main(string[] args)
         {
             Console.WriteLine("MODBUS listening service loaded.");
-            Console.WriteLine("Ver. 0.2\n");
+            Console.WriteLine("Ver. 0.3\n");
+            // чтение конфигурационного файла
+            var xdoc = XDocument.Load("L2M.xml");
+            XElement listenTcp = xdoc.Element("Config").Element("ListenTcp");
+            XElement element = listenTcp.Element("IpPort");
+            if (element == null || !int.TryParse(element.Value, out int ipPort))
+                ipPort = 502;
+            element = listenTcp.Element("SendTimeout");
+            if (element == null || !int.TryParse(element.Value, out int sendTimeout))
+                sendTimeout = 5000;
+            element = listenTcp.Element("ReceiveTimeout");
+            if (element == null || !int.TryParse(element.Value, out int receiveTimeout))
+                receiveTimeout = 5000;
             // запуск потока для прослушивания запосов от устройства по протоколу Modbus Tcp
             var listener = new BackgroundWorker { WorkerSupportsCancellation = true, WorkerReportsProgress = true };
             listener.DoWork += ModbusListener_DoWork;
             listener.ProgressChanged += ModbusListener_ProgressChanged;
             var tcptuning = new TcpTuning
             {
-                //Address = ipAddr,
-                //Port = ipPort,
-                //SendTimeout = sendTimeout,
-                //ReceiveTimeout = receiveTimeout,
-                //FetchParams = fetchParams,
-                //FetchArchives = fetchArchives
+                Address = IPAddress.Any,
+                Port = ipPort,
+                SendTimeout = sendTimeout,
+                ReceiveTimeout = receiveTimeout,
             };
             listener.RunWorkerAsync(tcptuning);
-            //
-            var worker = new BackgroundWorker { WorkerSupportsCancellation = true, WorkerReportsProgress = true };
-            worker.DoWork += Worker_DoWork;
-            worker.ProgressChanged += Worker_ProgressChanged;
-            worker.RunWorkerAsync();
+            // чтение параметров для опрашивающих потоков
+            foreach (XElement fetchingTcp in xdoc.Element("Config").Element("Fetching").Elements("ChannelTcp"))
+            {
+                var good = true;
+                element = fetchingTcp.Element("IpAddress");
+                IPAddress ipAddress = null;
+                if (element == null || !IPAddress.TryParse(element.Value, out ipAddress))
+                    good = false;
+                element = fetchingTcp.Element("IpPort");
+                if (element == null || !int.TryParse(element.Value, out ipPort))
+                    good = false;
+                element = listenTcp.Element("SendTimeout");
+                if (element == null || !int.TryParse(element.Value, out sendTimeout))
+                    good = false;
+                element = listenTcp.Element("ReceiveTimeout");
+                if (element == null || !int.TryParse(element.Value, out receiveTimeout))
+                    good = false;
+                if (good)
+                {
+                    var parameters = new List<RequestData>();
+                    byte dad = 0, sad = 0, nodeAddr = 0;
+                    int channel = 0, parameter = 0;
+                    ModbusTable modbusTable = ModbusTable.None;
+                    ushort startAddr = 0;
+                    string dataFormat = "";
+                    foreach (var item in fetchingTcp.Element("Runtime").Elements("LogikaItem"))
+                    {
+                        element = item.Element("Dad");
+                        if (element == null || !byte.TryParse(element.Value, out dad))
+                            good = false;
+                        element = item.Element("Sad");
+                        if (element == null || !byte.TryParse(element.Value, out sad))
+                            good = false;
+                        element = item.Element("Channel");
+                        if (element == null || !int.TryParse(element.Value, out channel))
+                            good = false;
+                        element = item.Element("Parameter");
+                        if (element == null || !int.TryParse(element.Value, out parameter))
+                            good = false;
+                        element = item.Element("ModbusNode");
+                        if (element == null || !byte.TryParse(element.Value, out nodeAddr))
+                            good = false;
+                        element = item.Element("DataFormat");
+                        if (element != null)
+                            dataFormat = element.Value;
+                        else
+                            good = false;
+                        element = item.Element("InputRegister");
+                        if (element != null)
+                        {
+                            modbusTable = ModbusTable.Inputs;
+                            if (!ushort.TryParse(element.Value, out startAddr))
+                                good = false;
+                        }
+                        else
+                        {
+                            element = item.Element("HoldingRegister");
+                            if (element != null)
+                            {
+                                modbusTable = ModbusTable.Holdings;
+                                if (!ushort.TryParse(element.Value, out startAddr))
+                                    good = false;
+                            }
+                            else
+                                good = false;
+                        }
+                        if (good)
+                        {
+                            parameters.Add(new RequestData()
+                            {
+                                Dad = dad,
+                                Sad = sad,
+                                Channel = channel,
+                                Parameter = parameter,
+                                NodeAddr = nodeAddr,
+                                StartAddr = startAddr,
+                                ModbusTable = modbusTable,
+                                FormatData = dataFormat
+                            });
+                        }
+                    }
+
+                    var worker = new BackgroundWorker { WorkerSupportsCancellation = true, WorkerReportsProgress = true };
+                    worker.DoWork += Worker_DoWork;
+                    worker.ProgressChanged += Worker_ProgressChanged;
+                    tcptuning = new TcpTuning
+                    {
+                        Address = ipAddress,
+                        Port = ipPort,
+                        SendTimeout = sendTimeout,
+                        ReceiveTimeout = receiveTimeout,
+                        Parameters = parameters,
+                        //FetchArchives = fetchArchives
+                    };
+                    worker.RunWorkerAsync(tcptuning);
+                }
+            }
 
             Console.WriteLine("Press any key for exit...");
             Console.ReadKey();
-            listener.CancelAsync();
         }
 
         private static void Worker_DoWork(object sender, DoWorkEventArgs e)
         {
             var worker = (BackgroundWorker)sender;
+            if (!(e.Argument is TcpTuning parameters)) return;
             var lastsecond = DateTime.Now.Second;
-            var remoteEp = new IPEndPoint(IPAddress.Parse("192.168.2.174"), 4001);
+            var remoteEp = new IPEndPoint(parameters.Address, parameters.Port);
             while (!worker.CancellationPending)
             {
                 var dt = DateTime.Now;
@@ -58,16 +161,20 @@ namespace L2M
                 {
                     using (var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
                     {
-                        socket.SendTimeout = 5000;
-                        socket.ReceiveTimeout = 5000;
+                        socket.SendTimeout = parameters.SendTimeout;
+                        socket.ReceiveTimeout = parameters.ReceiveTimeout;
                         socket.Connect(remoteEp);
                         Thread.Sleep(500);
                         if (socket.Connected)
                         {
-                            FetchLogikaParameter(socket, 1, 3, 1, 160, 1, 0, typeof(float));
-                            FetchLogikaParameter(socket, 1, 3, 0, 8, 1, 2, typeof(uint));
-                            FetchLogikaParameter(socket, 1, 3, 1, 162, 1, 4, typeof(float));
-                            FetchLogikaParameter(socket, 1, 3, 1, 163, 1, 6, typeof(float));
+                            foreach (var p in parameters.Parameters)
+                            {
+                                FetchLogikaParameter(socket, p.Dad, p.Sad, p.Channel, p.Parameter, p.NodeAddr, p.ModbusTable, p.StartAddr, p.FormatData);
+                            }
+                            //FetchLogikaParameter(socket, 1, 3, 1, 160, 1, 0, typeof(float));
+                            //FetchLogikaParameter(socket, 1, 3, 0, 8, 1, 2, typeof(uint));
+                            //FetchLogikaParameter(socket, 1, 3, 1, 162, 1, 4, typeof(float));
+                            //FetchLogikaParameter(socket, 1, 3, 1, 163, 1, 6, typeof(float));
                         }
                     }
                 }
@@ -79,7 +186,7 @@ namespace L2M
         }
 
         private static void FetchLogikaParameter(Socket socket, byte dad, byte sad, int channel, int parameter, 
-            byte nodeAddr, ushort startAddr, Type valueType)
+            byte nodeAddr, ModbusTable modbusTable, ushort startAddr, string dataFormat)
         {
             socket.Send(PrepareFetchParam(dad, sad, channel, parameter));
             Thread.Sleep(500);
@@ -94,7 +201,7 @@ namespace L2M
                     if (result.Dad == sad && result.Sad == dad && result.Fnc == 3 &&
                         result.Channel == channel && result.Parameter == parameter)
                     {
-                        if (valueType == typeof(float) && 
+                        if (dataFormat == "IEEEFP" && 
                             float.TryParse(result.Value, NumberStyles.Float, CultureInfo.GetCultureInfo("en-US"), out float floatValue))
                         {
                             ushort addr = startAddr;
@@ -103,7 +210,7 @@ namespace L2M
                             Array.Reverse(bytes);
                             for (ushort i = 0; i < 2; i++)
                             {
-                                var regAddr = ModifyToModbusRegisterAddress(addr, 3);
+                                var regAddr = ModifyToModbusRegisterAddress(addr, modbusTable);
                                 ushort value = BitConverter.ToUInt16(bytes, n);
                                 SetRegisterValue(nodeAddr, regAddr, value);
                                 n = n + 2;  // коррекция позиции смещения в принятых данных для записи
@@ -111,8 +218,8 @@ namespace L2M
                             }
                         }
                         else
-                        if (valueType == typeof(uint) &&
-                            uint.TryParse(result.Value, NumberStyles.Integer, CultureInfo.GetCultureInfo("en-US"), out uint intValue))
+                        if (dataFormat == "S32B" &&
+                            int.TryParse(result.Value, NumberStyles.Integer, CultureInfo.GetCultureInfo("en-US"), out int intValue))
                         {
                             ushort addr = startAddr;
                             var n = 0;
@@ -120,7 +227,7 @@ namespace L2M
                             //Array.Reverse(bytes);  <--- не делать реверс для uint
                             for (ushort i = 0; i < 2; i++)
                             {
-                                var regAddr = ModifyToModbusRegisterAddress(addr, 3);
+                                var regAddr = ModifyToModbusRegisterAddress(addr, modbusTable);
                                 ushort value = BitConverter.ToUInt16(bytes, n);
                                 SetRegisterValue(nodeAddr, regAddr, Swap(value)); // <--- Swap() для uint
                                 n = n + 2;  // коррекция позиции смещения в принятых данных для записи
@@ -412,7 +519,7 @@ namespace L2M
 
                                         for (ushort i = 0; i < regCount; i++)
                                         {
-                                            var regAddr = ModifyToModbusRegisterAddress((ushort)(i + startAddr), funcCode);
+                                            var regAddr = ModifyToModbusRegisterAddress((ushort)(i + startAddr), (ModbusTable)funcCode);
                                             ushort value = GetRegisterValue(nodeAddr, regAddr);
                                             answer.AddRange(BitConverter.GetBytes(value));
                                         }
@@ -421,7 +528,7 @@ namespace L2M
                                         stream.Write(msg, 0, msg.Length);
                                         break;
                                     case 6: // write one register
-                                        SetRegisterValue(nodeAddr, ModifyToModbusRegisterAddress(startAddr, 3), singleValue);
+                                        SetRegisterValue(nodeAddr, ModifyToModbusRegisterAddress(startAddr, ModbusTable.Holdings), singleValue);
                                         //-------------------
                                         answer = new List<byte>();
                                         answer.AddRange(BitConverter.GetBytes(Swap(header1)));
@@ -439,7 +546,7 @@ namespace L2M
                                         ushort addr = startAddr;
                                         for (ushort i = 0; i < regCount; i++)
                                         {
-                                            var regAddr = ModifyToModbusRegisterAddress(addr, 3);
+                                            var regAddr = ModifyToModbusRegisterAddress(addr, ModbusTable.Holdings);
                                             ushort value = BitConverter.ToUInt16(bytes, n);
                                             SetRegisterValue(nodeAddr, regAddr, value);
                                             n = n + 2;  // коррекция позиции смещения в принятых данных для записи
@@ -507,17 +614,17 @@ namespace L2M
             return BitConverter.ToUInt16(bytes, 0);
         }
 
-        private static ushort ModifyToModbusRegisterAddress(ushort startAddr, byte funcCode)
+        private static ushort ModifyToModbusRegisterAddress(ushort startAddr, ModbusTable funcCode)
         {
             switch (funcCode)
             {
-                case 1:
+                case ModbusTable.Coils:
                     return Convert.ToUInt16(1 + startAddr);       // coils
-                case 2:
+                case ModbusTable.Contacts:
                     return Convert.ToUInt16(10001 + startAddr);   // contacts
-                case 3:
+                case ModbusTable.Holdings:
                     return Convert.ToUInt16(40001 + startAddr);   // holdings
-                case 4:
+                case ModbusTable.Inputs:
                     return Convert.ToUInt16(30001 + startAddr);   // inputs
             }
             throw new NotImplementedException();
@@ -551,6 +658,27 @@ namespace L2M
         }
     }
 
+    public class RequestData
+    {
+        public byte Dad { get; set; }
+        public byte Sad { get; set; }
+        public int Channel { get; set; }
+        public int Parameter { get; set; }
+        public byte NodeAddr { get; set; }
+        public ModbusTable ModbusTable { get; set; }
+        public ushort StartAddr { get; set; }
+        public string FormatData { get; set; }
+    }
+
+    public enum ModbusTable
+    {
+        None = 0,
+        Coils = 1,
+        Contacts = 2,
+        Holdings = 3,
+        Inputs = 4
+    }
+
     public class TcpTuning
     {
         public Guid ChannelId { get; set; }
@@ -560,7 +688,7 @@ namespace L2M
         public int ReceiveTimeout { get; set; } = 5000;
         public int WaitForConnect { get; set; } = 50;
         public int WaitForAnswer { get; set; } = 200;
-        //public IEnumerable<RequestData> FetchRequests { get; set; } = new List<RequestData>();
+        public IEnumerable<RequestData> Parameters { get; set; } = new List<RequestData>();
     }
 
     public static class cp866unicode
