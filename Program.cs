@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.ServiceProcess;
@@ -13,8 +14,9 @@ namespace L2M
     {
         static void Main(string[] args)
         {
+            var configName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "L2M.xml");
             // чтение конфигурационного файла
-            var xdoc = XDocument.Load("L2M.xml");
+            var xdoc = XDocument.Load(configName);
             XElement listenTcp = xdoc.Element("Config").Element("ListenTcp");
             XElement element = listenTcp.Element("IpPort");
             if (element == null || !int.TryParse(element.Value, out int ipPort))
