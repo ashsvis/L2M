@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Net;
 using System.Net.Sockets;
+using System.ServiceProcess;
 using System.Threading;
 using System.Xml.Linq;
 
@@ -12,8 +13,6 @@ namespace L2M
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("MODBUS listening service loaded.");
-            Console.WriteLine("Ver. 0.3\n");
             // чтение конфигурационного файла
             var xdoc = XDocument.Load("L2M.xml");
             XElement listenTcp = xdoc.Element("Config").Element("ListenTcp");
@@ -73,9 +72,19 @@ namespace L2M
                     worker.RunWorkerAsync(tcptuning);
                 }
             }
-
-            Console.WriteLine("Press any key for exit...");
-            Console.ReadKey();
+            // Если запускает пользователь сам
+            if (Environment.UserInteractive)
+            {
+                Console.WriteLine("MODBUS listening service loaded.");
+                Console.WriteLine("Ver. 0.3\n");
+                Console.WriteLine("Press any key for exit...");
+                Console.ReadKey();
+            }
+            else
+            {
+                var servicesToRun = new ServiceBase[] { new WinService() };
+                ServiceBase.Run(servicesToRun);
+            }
         }
 
         private static IEnumerable<RequestData> FillParameters(XElement fetchingTcp)
