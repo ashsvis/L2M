@@ -42,8 +42,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AnswerData.cs" />
+    <Compile Include="cp866unicode.cs" />
+    <Compile Include="Logika.cs" />
+    <Compile Include="Modbus.cs" />
+    <Compile Include="ModbusTable.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RequestData.cs" />
+    <Compile Include="TcpTuning.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
