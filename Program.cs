@@ -99,8 +99,9 @@ namespace L2M
         {
             var parameters = new List<RequestData>();
             byte dad = 0, sad = 0, nodeAddr = 0;
-            int channel = 0, parameter = 0, answerWait = 0;
+            int channel = 0, parameter = 0, answerWait = 0, arrayIndexNumber = 0;
             ModbusTable modbusTable = ModbusTable.None;
+            LogikaParam paramKind = LogikaParam.Parameter;
             ushort startAddr = 0;
             string dataFormat = "";
             bool good = true;
@@ -116,8 +117,29 @@ namespace L2M
                 if (element == null || !int.TryParse(element.Value, out channel))
                     good = false;
                 element = item.Element("Parameter");
-                if (element == null || !int.TryParse(element.Value, out parameter))
-                    good = false;
+                if (element != null)
+                {
+                    paramKind = LogikaParam.Parameter;
+                    if (!int.TryParse(element.Value, out parameter))
+                        good = false;
+                }
+                else
+                {
+                    element = item.Element("IndexArray");
+                    if (element != null)
+                    {
+                        paramKind = LogikaParam.IndexArray;
+                        if (!int.TryParse(element.Value, out parameter))
+                            good = false;
+                        element = item.Element("ArrayIndexNumber");
+                        if (element == null || !int.TryParse(element.Value, out arrayIndexNumber))
+                            good = false;
+
+                    }
+                    else
+                        good = false;
+                }
+
                 element = item.Element("ModbusNode");
                 if (element == null || !byte.TryParse(element.Value, out nodeAddr))
                     good = false;
@@ -155,7 +177,9 @@ namespace L2M
                         Dad = dad,
                         Sad = sad,
                         Channel = channel,
+                        ParameterKind = paramKind,
                         Parameter = parameter,
+                        ArrayIndexNumber = arrayIndexNumber,
                         NodeAddr = nodeAddr,
                         StartAddr = startAddr,
                         ModbusTable = modbusTable,
@@ -196,7 +220,17 @@ namespace L2M
                         {
                             foreach (var p in parameters.Parameters)
                             {
-                                Logika.FetchParameter(socket, p.Dad, p.Sad, p.Channel, p.Parameter, p.NodeAddr, p.ModbusTable, p.StartAddr, p.FormatData, p.AnswerWait);
+                                switch (p.ParameterKind)
+                                {
+                                    case LogikaParam.Parameter:
+                                        Logika.FetchParameter(socket, p.Dad, p.Sad, p.Channel, p.Parameter,
+                                                              p.NodeAddr, p.ModbusTable, p.StartAddr, p.FormatData, p.AnswerWait);
+                                        break;
+                                    case LogikaParam.IndexArray:
+                                        Logika.FetchIndexArray(socket, p.Dad, p.Sad, p.Channel, p.Parameter, p.ArrayIndexNumber,
+                                                              p.NodeAddr, p.ModbusTable, p.StartAddr, p.FormatData, p.AnswerWait);
+                                        break;
+                                }
                             }
                         }
                     }

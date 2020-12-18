@@ -21,7 +21,7 @@
           <ModbusNode>1</ModbusNode>
           <InputRegister>0</InputRegister>
           <DataFormat>IEEEFP</DataFormat>
-          <AnswerWait>100</AnswerWait>
+          <AnswerWait>150</AnswerWait>
         </LogikaItem>
         <LogikaItem>
           <Dad>1</Dad>
@@ -31,7 +31,7 @@
           <ModbusNode>1</ModbusNode>
           <InputRegister>2</InputRegister>
           <DataFormat>S32B</DataFormat>
-          <AnswerWait>100</AnswerWait>
+          <AnswerWait>150</AnswerWait>
         </LogikaItem>
         <LogikaItem>
           <Dad>1</Dad>
@@ -41,7 +41,7 @@
           <ModbusNode>1</ModbusNode>
           <InputRegister>4</InputRegister>
           <DataFormat>IEEEFP</DataFormat>
-          <AnswerWait>100</AnswerWait>
+          <AnswerWait>150</AnswerWait>
         </LogikaItem>
         <LogikaItem>
           <Dad>1</Dad>
@@ -51,17 +51,40 @@
           <ModbusNode>1</ModbusNode>
           <InputRegister>6</InputRegister>
           <DataFormat>IEEEFP</DataFormat>
-          <AnswerWait>100</AnswerWait>
+          <AnswerWait>150</AnswerWait>
         </LogikaItem>
         <LogikaItem>
           <Dad>1</Dad>
           <Sad>3</Sad>
           <Channel>1</Channel>
-          <Parameter>12505</Parameter>
+          <IndexArray>125</IndexArray>
+          <ArrayIndexNumber>5</ArrayIndexNumber>
           <ModbusNode>1</ModbusNode>
-          <InputRegister>8</InputRegister>
+          <HoldingRegister>0</HoldingRegister>
           <DataFormat>IEEEFP</DataFormat>
-          <AnswerWait>100</AnswerWait>
+          <AnswerWait>150</AnswerWait>
+        </LogikaItem>
+        <LogikaItem>
+          <Dad>1</Dad>
+          <Sad>3</Sad>
+          <Channel>1</Channel>
+          <IndexArray>125</IndexArray>
+          <ArrayIndexNumber>6</ArrayIndexNumber>
+          <ModbusNode>1</ModbusNode>
+          <HoldingRegister>2</HoldingRegister>
+          <DataFormat>IEEEFP</DataFormat>
+          <AnswerWait>150</AnswerWait>
+        </LogikaItem>
+        <LogikaItem>
+          <Dad>1</Dad>
+          <Sad>3</Sad>
+          <Channel>1</Channel>
+          <IndexArray>125</IndexArray>
+          <ArrayIndexNumber>8</ArrayIndexNumber>
+          <ModbusNode>1</ModbusNode>
+          <HoldingRegister>4</HoldingRegister>
+          <DataFormat>IEEEFP</DataFormat>
+          <AnswerWait>150</AnswerWait>
         </LogikaItem>
       </Runtime>
     </ChannelTcp>

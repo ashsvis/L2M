@@ -3,14 +3,123 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Net.Sockets;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace L2M
 {
     public static class Logika
     {
+
+        public static void FetchIndexArray(Socket socket, byte dad, byte sad, int channel, int arrayNumber, int arrayIndex, 
+            byte nodeAddr, ModbusTable modbusTable, ushort startAddr, string dataFormat, int answerWait)
+        {
+            socket.Send(PrepareFetchArrayIndex(dad, sad, channel, arrayNumber, arrayIndex, 1));
+            Thread.Sleep(answerWait);
+            var buff = new byte[8192];
+            var numBytes = socket.Receive(buff);
+            if (numBytes > 0)
+            {
+                var answer = CleanAnswer(buff);
+                if (CheckAnswer(answer))
+                {
+                    var result = EncodeIndexAnswer(answer);
+                    if (result.Dad == dad && result.Sad == sad && result.Fnc == 20 &&
+                        result.Channel == channel && result.Parameter == arrayNumber)
+                    {
+                        Console.SetCursorPosition(0, startAddr + 15);
+                        Console.Write($"{channel}.{arrayNumber}.{arrayIndex}\t{result.Value}\t{result.Unit}\t");
+
+                        CheckAndStoreData(nodeAddr, modbusTable, startAddr, dataFormat, result);
+                    }
+                }
+                else
+                    throw new Exception($"Logika DAD:{dad} {channel}.{arrayNumber}.{arrayIndex} checksumm error");
+            }
+        }
+
+        static AnswerData EncodeIndexAnswer(IEnumerable<byte> buff)
+        {
+            var arr = Unstuff(buff);
+            // разборка телеграммы
+            var s = cp866unicode.UnicodeString(arr);
+            var sft = s.Split('\f').Select(x => x.Split(new[] { '\t' }, StringSplitOptions.RemoveEmptyEntries)).ToList();
+            // [0] - SOH; [1] - DAD; [2] - SAD; [3] - IS1; [4] - FNC
+            byte dad = 0;
+            byte sad = 0;
+            byte fnc = 0;
+            int chano = -1;
+            int parno = -1;
+            int offset = -1;
+            int count = -1;
+            if (sft.Count > 1)
+            {
+                if (sft[0].Length == 5)
+                {
+                    var headlen = sft[0][0].Length;
+                    if (headlen == 6 && (byte)sft[0][0][0] == SOH && (byte)sft[0][0][3] == ISI)
+                    {
+                        dad = (byte)sft[0][0][1];
+                        sad = (byte)sft[0][0][2];
+                        fnc = (byte)sft[0][0][4];
+                    }
+                    int.TryParse(sft[0][1], out chano);
+                    int.TryParse(sft[0][2], out parno);
+                    int.TryParse(sft[0][3], out offset);
+                    int.TryParse(sft[0][4], out count);
+                }
+            }
+            var list = new List<AnswerData>();
+            //if (fnc != 20) return list.ToArray();
+            foreach (var item in sft.Skip(1).Take(sft.Count - 2).Where(item => item.Length > 0))
+            {
+                var unit = string.Empty;
+                var time = string.Empty;
+                if (item.Length > 1)
+                {
+                    unit = item[1];
+                    if (unit == "'C") unit = "°C";
+                    if (item.Length > 2)
+                        time = item[2];
+                }
+                return new AnswerData
+                {
+                    Dad = sad,
+                    Sad = dad,
+                    Fnc = fnc,
+                    Channel = chano,
+                    Parameter = parno,
+                    Value = item[0],
+                    Unit = unit,
+                    Time = time
+                };
+            }
+            return new AnswerData();
+        }
+
+        static byte[] PrepareFetchArrayIndex(byte dad, byte sad, int channel, int array, int first, int count)
+        {
+            byte FNC = 0x0c; // код функции для запроса значения индексного массива
+            var list = new List<byte> { DLE, SOH, dad, sad, DLE, ISI, FNC, DLE, STX };
+            list.Add(HT);
+            list.AddRange(cp866unicode.OemString($"{channel}"));
+            list.Add(HT);
+            list.AddRange(cp866unicode.OemString($"{array}"));
+            list.Add(HT);
+            list.AddRange(cp866unicode.OemString($"{first}"));
+            list.Add(HT);
+            list.AddRange(cp866unicode.OemString($"{count}"));
+            list.Add(FF);
+            list.Add(DLE); list.Add(ETX);
+            // контрольная сумма
+            byte[] crcbuff = list.ToArray();
+            var arg = new byte[crcbuff.Length - 2];
+            Array.Copy(crcbuff, 2, arg, 0, crcbuff.Length - 2);
+            var crc = CrCode(arg);
+            list.Add((byte)(crc >> 8)); // high crc parth
+            list.Add((byte)(crc & 0xff)); // low crc parth
+            return list.ToArray();
+        }
+
         public static void FetchParameter(Socket socket, byte dad, byte sad, int channel, int parameter,
             byte nodeAddr, ModbusTable modbusTable, ushort startAddr, string dataFormat, int answerWait)
         {
@@ -28,46 +137,50 @@ namespace L2M
                         result.Channel == channel && result.Parameter == parameter)
                     {
                         Console.SetCursorPosition(0, startAddr + 5);
-                        Console.Write($"{result.Value} {result.Unit}");
+                        Console.Write($"{channel}.{parameter}\t{result.Value}\t{result.Unit}\t");
 
-                        if (dataFormat == "IEEEFP" &&
-                            float.TryParse(result.Value, NumberStyles.Float, CultureInfo.GetCultureInfo("en-US"), out float floatValue))
-                        {
-                            ushort addr = startAddr;
-                            var n = 0;
-                            var bytes = BitConverter.GetBytes(floatValue);
-                            Array.Reverse(bytes);
-                            for (ushort i = 0; i < 2; i++)
-                            {
-                                var regAddr = Modbus.ModifyToModbusRegisterAddress(addr, modbusTable);
-                                ushort value = BitConverter.ToUInt16(bytes, n);
-                                Modbus.SetRegisterValue(nodeAddr, regAddr, value);
-                                n = n + 2;  // коррекция позиции смещения в принятых данных для записи
-                                addr += 1;
-                            }
-                        }
-                        else
-                        if (dataFormat == "S32B" &&
-                            int.TryParse(result.Value, NumberStyles.Integer, CultureInfo.GetCultureInfo("en-US"), out int intValue))
-                        {
-                            ushort addr = startAddr;
-                            var n = 0;
-                            var bytes = BitConverter.GetBytes(intValue);
-                            //Array.Reverse(bytes);  <--- не делать реверс для uint
-                            for (ushort i = 0; i < 2; i++)
-                            {
-                                var regAddr = Modbus.ModifyToModbusRegisterAddress(addr, modbusTable);
-                                ushort value = BitConverter.ToUInt16(bytes, n);
-                                Modbus.SetRegisterValue(nodeAddr, regAddr, Modbus.Swap(value)); // <--- Swap() для uint
-                                n = n + 2;  // коррекция позиции смещения в принятых данных для записи
-                                addr += 1;
-                            }
-                        }
-
+                        CheckAndStoreData(nodeAddr, modbusTable, startAddr, dataFormat, result);
                     }
                 }
                 else
                     throw new Exception($"Logika DAD:{dad} {channel}.{parameter} checksumm error");
+            }
+        }
+
+        private static void CheckAndStoreData(byte nodeAddr, ModbusTable modbusTable, ushort startAddr, string dataFormat, AnswerData result)
+        {
+            if (dataFormat == "IEEEFP" &&
+                float.TryParse(result.Value, NumberStyles.Float, CultureInfo.GetCultureInfo("en-US"), out float floatValue))
+            {
+                ushort addr = startAddr;
+                var n = 0;
+                var bytes = BitConverter.GetBytes(floatValue);
+                Array.Reverse(bytes);
+                for (ushort i = 0; i < 2; i++)
+                {
+                    var regAddr = Modbus.ModifyToModbusRegisterAddress(addr, modbusTable);
+                    ushort value = BitConverter.ToUInt16(bytes, n);
+                    Modbus.SetRegisterValue(nodeAddr, regAddr, value);
+                    n = n + 2;  // коррекция позиции смещения в принятых данных для записи
+                    addr += 1;
+                }
+            }
+            else
+            if (dataFormat == "S32B" &&
+                int.TryParse(result.Value, NumberStyles.Integer, CultureInfo.GetCultureInfo("en-US"), out int intValue))
+            {
+                ushort addr = startAddr;
+                var n = 0;
+                var bytes = BitConverter.GetBytes(intValue);
+                //Array.Reverse(bytes);  <--- не делать реверс для uint
+                for (ushort i = 0; i < 2; i++)
+                {
+                    var regAddr = Modbus.ModifyToModbusRegisterAddress(addr, modbusTable);
+                    ushort value = BitConverter.ToUInt16(bytes, n);
+                    Modbus.SetRegisterValue(nodeAddr, regAddr, Modbus.Swap(value)); // <--- Swap() для uint
+                    n = n + 2;  // коррекция позиции смещения в принятых данных для записи
+                    addr += 1;
+                }
             }
         }
 
@@ -267,6 +380,5 @@ namespace L2M
             }
             return crc;
         }
-
     }
 }

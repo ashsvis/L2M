@@ -47,6 +47,7 @@
     <Compile Include="AnswerData.cs" />
     <Compile Include="cp866unicode.cs" />
     <Compile Include="Logika.cs" />
+    <Compile Include="LogikaParam.cs" />
     <Compile Include="Modbus.cs" />
     <Compile Include="ModbusTable.cs" />
     <Compile Include="Program.cs" />
