@@ -26,9 +26,6 @@ namespace L2M
                     if (result.Dad == dad && result.Sad == sad && result.Fnc == 20 &&
                         result.Channel == channel && result.Parameter == arrayNumber)
                     {
-                        Console.SetCursorPosition(0, startAddr + 15);
-                        Console.Write($"{channel}.{arrayNumber}.{arrayIndex}\t{result.Value}\t{result.Unit}\t");
-
                         CheckAndStoreData(nodeAddr, modbusTable, startAddr, dataFormat, result);
                     }
                 }
@@ -136,9 +133,6 @@ namespace L2M
                     if (result.Dad == sad && result.Sad == dad && result.Fnc == 3 &&
                         result.Channel == channel && result.Parameter == parameter)
                     {
-                        Console.SetCursorPosition(0, startAddr + 5);
-                        Console.Write($"{channel}.{parameter}\t{result.Value}\t{result.Unit}\t");
-
                         CheckAndStoreData(nodeAddr, modbusTable, startAddr, dataFormat, result);
                     }
                 }
