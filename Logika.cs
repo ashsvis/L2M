@@ -12,10 +12,10 @@ namespace L2M
     public static class Logika
     {
         public static void FetchParameter(Socket socket, byte dad, byte sad, int channel, int parameter,
-            byte nodeAddr, ModbusTable modbusTable, ushort startAddr, string dataFormat)
+            byte nodeAddr, ModbusTable modbusTable, ushort startAddr, string dataFormat, int answerWait)
         {
             socket.Send(PrepareFetchParam(dad, sad, channel, parameter));
-            Thread.Sleep(500);
+            Thread.Sleep(answerWait);
             var buff = new byte[8192];
             var numBytes = socket.Receive(buff);
             if (numBytes > 0)
@@ -63,6 +63,8 @@ namespace L2M
 
                     }
                 }
+                else
+                    throw new Exception($"Logika DAD:{dad} {channel}.{parameter} checksumm error");
             }
         }
 

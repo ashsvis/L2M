@@ -19,8 +19,9 @@
           <Channel>1</Channel>
           <Parameter>160</Parameter>
           <ModbusNode>1</ModbusNode>
-          <HoldingRegister>0</HoldingRegister>
+          <InputRegister>0</InputRegister>
           <DataFormat>IEEEFP</DataFormat>
+          <AnswerWait>100</AnswerWait>
         </LogikaItem>
         <LogikaItem>
           <Dad>1</Dad>
@@ -28,8 +29,9 @@
           <Channel>0</Channel>
           <Parameter>8</Parameter>
           <ModbusNode>1</ModbusNode>
-          <HoldingRegister>2</HoldingRegister>
+          <InputRegister>2</InputRegister>
           <DataFormat>S32B</DataFormat>
+          <AnswerWait>100</AnswerWait>
         </LogikaItem>
         <LogikaItem>
           <Dad>1</Dad>
@@ -37,8 +39,9 @@
           <Channel>1</Channel>
           <Parameter>162</Parameter>
           <ModbusNode>1</ModbusNode>
-          <HoldingRegister>4</HoldingRegister>
+          <InputRegister>4</InputRegister>
           <DataFormat>IEEEFP</DataFormat>
+          <AnswerWait>100</AnswerWait>
         </LogikaItem>
         <LogikaItem>
           <Dad>1</Dad>
@@ -46,8 +49,9 @@
           <Channel>1</Channel>
           <Parameter>163</Parameter>
           <ModbusNode>1</ModbusNode>
-          <HoldingRegister>6</HoldingRegister>
+          <InputRegister>6</InputRegister>
           <DataFormat>IEEEFP</DataFormat>
+          <AnswerWait>100</AnswerWait>
         </LogikaItem>
       </Runtime>
     </ChannelTcp>

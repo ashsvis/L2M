@@ -36,9 +36,9 @@ namespace L2M
             {
                 ReadConfigParameters(fetchingTcp, out ipAddress, out ipPort, out sendTimeout, out receiveTimeout);
                 var parameters = FillParameters(fetchingTcp);
-                var worker = new BackgroundWorker { WorkerSupportsCancellation = true, WorkerReportsProgress = true };
-                worker.DoWork += Worker_DoWork;
-                worker.ProgressChanged += Worker_ProgressChanged;
+                var fetcher = new BackgroundWorker { WorkerSupportsCancellation = true, WorkerReportsProgress = true };
+                fetcher.DoWork += LogikaFetcher_DoWork;
+                fetcher.ProgressChanged += LogikaFetcher_ProgressChanged;
                 tcptuning = new TcpTuning
                 {
                     Address = ipAddress,
@@ -48,7 +48,7 @@ namespace L2M
                     Parameters = parameters,
                     //FetchArchives = fetchArchives
                 };
-                worker.RunWorkerAsync(tcptuning);
+                fetcher.RunWorkerAsync(tcptuning);
             }
             // Если запускает пользователь сам
             if (Environment.UserInteractive)
@@ -99,7 +99,7 @@ namespace L2M
         {
             var parameters = new List<RequestData>();
             byte dad = 0, sad = 0, nodeAddr = 0;
-            int channel = 0, parameter = 0;
+            int channel = 0, parameter = 0, answerWait = 0;
             ModbusTable modbusTable = ModbusTable.None;
             ushort startAddr = 0;
             string dataFormat = "";
@@ -125,6 +125,9 @@ namespace L2M
                 if (element != null)
                     dataFormat = element.Value;
                 else
+                    good = false;
+                element = item.Element("AnswerWait");
+                if (element == null || !int.TryParse(element.Value, out answerWait))
                     good = false;
                 element = item.Element("InputRegister");
                 if (element != null)
@@ -156,14 +159,20 @@ namespace L2M
                         NodeAddr = nodeAddr,
                         StartAddr = startAddr,
                         ModbusTable = modbusTable,
-                        FormatData = dataFormat
+                        FormatData = dataFormat,
+                        AnswerWait = answerWait
                     });
                 }
             }
             return parameters;
         }
 
-        private static void Worker_DoWork(object sender, DoWorkEventArgs e)
+        /// <summary>
+        /// Работа потока для опроса ЛОГИКИ
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private static void LogikaFetcher_DoWork(object sender, DoWorkEventArgs e)
         {
             var worker = (BackgroundWorker)sender;
             if (!(e.Argument is TcpTuning parameters)) return;
@@ -187,7 +196,7 @@ namespace L2M
                         {
                             foreach (var p in parameters.Parameters)
                             {
-                                Logika.FetchParameter(socket, p.Dad, p.Sad, p.Channel, p.Parameter, p.NodeAddr, p.ModbusTable, p.StartAddr, p.FormatData);
+                                Logika.FetchParameter(socket, p.Dad, p.Sad, p.Channel, p.Parameter, p.NodeAddr, p.ModbusTable, p.StartAddr, p.FormatData, p.AnswerWait);
                             }
                         }
                     }
@@ -199,7 +208,7 @@ namespace L2M
             }
         }
 
-        private static void Worker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        private static void LogikaFetcher_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             Console.WriteLine($"{e.UserState}");
         }

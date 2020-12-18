@@ -10,5 +10,6 @@
         public ModbusTable ModbusTable { get; set; }
         public ushort StartAddr { get; set; }
         public string FormatData { get; set; }
+        public int AnswerWait { get; set; }
     }
 }
