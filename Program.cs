@@ -18,15 +18,7 @@ namespace L2M
             // чтение конфигурационного файла
             var xdoc = XDocument.Load(configName);
             XElement listenTcp = xdoc.Element("Config").Element("ListenTcp");
-            XElement element = listenTcp.Element("IpPort");
-            if (element == null || !int.TryParse(element.Value, out int ipPort))
-                ipPort = 502;
-            element = listenTcp.Element("SendTimeout");
-            if (element == null || !int.TryParse(element.Value, out int sendTimeout))
-                sendTimeout = 5000;
-            element = listenTcp.Element("ReceiveTimeout");
-            if (element == null || !int.TryParse(element.Value, out int receiveTimeout))
-                receiveTimeout = 5000;
+            ReadConfigParameters(listenTcp, out IPAddress ipAddress, out int ipPort, out int sendTimeout, out int receiveTimeout);
             // запуск потока для прослушивания запосов от устройства по протоколу Modbus Tcp
             var listener = new BackgroundWorker { WorkerSupportsCancellation = true, WorkerReportsProgress = true };
             listener.DoWork += ModbusListener_DoWork;
@@ -42,37 +34,21 @@ namespace L2M
             // чтение параметров для опрашивающих потоков
             foreach (XElement fetchingTcp in xdoc.Element("Config").Element("Fetching").Elements("ChannelTcp"))
             {
-                var good = true;
-                element = fetchingTcp.Element("IpAddress");
-                IPAddress ipAddress = null;
-                if (element == null || !IPAddress.TryParse(element.Value, out ipAddress))
-                    good = false;
-                element = fetchingTcp.Element("IpPort");
-                if (element == null || !int.TryParse(element.Value, out ipPort))
-                    good = false;
-                element = listenTcp.Element("SendTimeout");
-                if (element == null || !int.TryParse(element.Value, out sendTimeout))
-                    good = false;
-                element = listenTcp.Element("ReceiveTimeout");
-                if (element == null || !int.TryParse(element.Value, out receiveTimeout))
-                    good = false;
-                if (good)
-                {                   
-                    var parameters = FillParameters(fetchingTcp);
-                    var worker = new BackgroundWorker { WorkerSupportsCancellation = true, WorkerReportsProgress = true };
-                    worker.DoWork += Worker_DoWork;
-                    worker.ProgressChanged += Worker_ProgressChanged;
-                    tcptuning = new TcpTuning
-                    {
-                        Address = ipAddress,
-                        Port = ipPort,
-                        SendTimeout = sendTimeout,
-                        ReceiveTimeout = receiveTimeout,
-                        Parameters = parameters,
-                        //FetchArchives = fetchArchives
-                    };
-                    worker.RunWorkerAsync(tcptuning);
-                }
+                ReadConfigParameters(fetchingTcp, out ipAddress, out ipPort, out sendTimeout, out receiveTimeout);
+                var parameters = FillParameters(fetchingTcp);
+                var worker = new BackgroundWorker { WorkerSupportsCancellation = true, WorkerReportsProgress = true };
+                worker.DoWork += Worker_DoWork;
+                worker.ProgressChanged += Worker_ProgressChanged;
+                tcptuning = new TcpTuning
+                {
+                    Address = ipAddress,
+                    Port = ipPort,
+                    SendTimeout = sendTimeout,
+                    ReceiveTimeout = receiveTimeout,
+                    Parameters = parameters,
+                    //FetchArchives = fetchArchives
+                };
+                worker.RunWorkerAsync(tcptuning);
             }
             // Если запускает пользователь сам
             if (Environment.UserInteractive)
@@ -89,7 +65,37 @@ namespace L2M
             }
         }
 
-        private static IEnumerable<RequestData> FillParameters(XElement fetchingTcp)
+        /// <summary>
+        /// Чтение конфигурационных параметров
+        /// </summary>
+        /// <param name="parentElement">Родительский элемент</param>
+        /// <param name="ipAddress">IP Address</param>
+        /// <param name="ipPort">IP Port</param>
+        /// <param name="sendTimeout">Send timeout</param>
+        /// <param name="receiveTimeout">Receive timeout</param>
+        private static void ReadConfigParameters(XElement parentElement, out IPAddress ipAddress, out int ipPort, out int sendTimeout, out int receiveTimeout)
+        {
+            XElement element = parentElement.Element("IpAddress");
+            ipAddress = null;
+            if (element == null || !IPAddress.TryParse(element.Value, out ipAddress))
+                ipAddress = IPAddress.Parse("127.0.0.1");
+            element = parentElement.Element("IpPort");
+            if (element == null || !int.TryParse(element.Value, out ipPort))
+                ipPort = 502;
+            element = parentElement.Element("SendTimeout");
+            if (element == null || !int.TryParse(element.Value, out sendTimeout))
+                sendTimeout = 5000;
+            element = parentElement.Element("ReceiveTimeout");
+            if (element == null || !int.TryParse(element.Value, out receiveTimeout))
+                receiveTimeout = 5000;
+        }
+
+        /// <summary>
+        /// Чтение параметров опроса
+        /// </summary>
+        /// <param name="parentElement">Родительский элемент</param>
+        /// <returns></returns>
+        private static IEnumerable<RequestData> FillParameters(XElement parentElement)
         {
             var parameters = new List<RequestData>();
             byte dad = 0, sad = 0, nodeAddr = 0;
@@ -98,7 +104,7 @@ namespace L2M
             ushort startAddr = 0;
             string dataFormat = "";
             bool good = true;
-            foreach (var item in fetchingTcp.Element("Runtime").Elements("LogikaItem"))
+            foreach (var item in parentElement.Element("Runtime").Elements("LogikaItem"))
             {
                 var element = item.Element("Dad");
                 if (element == null || !byte.TryParse(element.Value, out dad))
