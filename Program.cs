@@ -367,23 +367,6 @@ namespace L2M
         /// <param name="e"></param>
         private static void ModbusListener_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            //if (e.ProgressPercentage != 0)
-            //{
-            //    Console.Clear();
-            //    var top = 0;
-            //    var node = (byte)e.ProgressPercentage;
-            //    lock (locker)
-            //    {
-            //        // диапазон 4хххх - для holding регистров
-            //        for (var i = 40000; i < 40010; i++)
-            //        {
-            //            Console.SetCursorPosition(0, top++);
-            //            Console.Write(Swap(registers[node - 1, i]));
-            //        }
-            //    }
-            //    Console.SetCursorPosition(0, ++top);
-            //    Console.Write($"{e.UserState}");
-            //}
             Console.WriteLine($"{e.UserState}");
         }
     }

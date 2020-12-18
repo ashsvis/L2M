@@ -27,6 +27,9 @@ namespace L2M
                     if (result.Dad == sad && result.Sad == dad && result.Fnc == 3 &&
                         result.Channel == channel && result.Parameter == parameter)
                     {
+                        Console.SetCursorPosition(0, startAddr + 5);
+                        Console.Write($"{result.Value} {result.Unit}");
+
                         if (dataFormat == "IEEEFP" &&
                             float.TryParse(result.Value, NumberStyles.Float, CultureInfo.GetCultureInfo("en-US"), out float floatValue))
                         {
