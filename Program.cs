@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
@@ -218,10 +219,18 @@ namespace L2M
                         Thread.Sleep(500);
                         if (socket.Connected)
                         {
-                            //Logika.WriteToIndexArray(socket, 1, 3, 1, 125, 5, 150, "1.939");
-
                             foreach (var p in parameters.Parameters)
                             {
+                                if (p.ModbusTable == ModbusTable.Holdings)
+                                {
+                                    var regAddr = Modbus.ModifyToModbusRegisterAddress(p.StartAddr, ModbusTable.Holdings);
+                                    var value = Modbus.GetParamValue(new ParamAddr(p.NodeAddr, regAddr));
+                                    if (!string.IsNullOrWhiteSpace(value))
+                                    {
+                                        //Logika.WriteToIndexArray(socket, dad: 1, sad: 3, channel: 1, arrayNumber: 125, arrayIndex: 5, answerWait: 150, value: "1.939");
+                                        Logika.WriteToIndexArray(socket, p.Dad, p.Sad, p.Channel, p.Parameter, p.ArrayIndexNumber, p.AnswerWait, value);
+                                    }
+                                }
                                 switch (p.ParameterKind)
                                 {
                                     case LogikaParam.Parameter:
@@ -356,8 +365,14 @@ namespace L2M
                                             var regAddr = Modbus.ModifyToModbusRegisterAddress(addr, ModbusTable.Holdings);
                                             ushort value = BitConverter.ToUInt16(bytes, n);
                                             Modbus.SetRegisterValue(nodeAddr, regAddr, value);
-                                            n = n + 2;  // коррекция позиции смещения в принятых данных для записи
+                                            n += 2;  // коррекция позиции смещения в принятых данных для записи
                                             addr += 1;
+                                        }
+                                        if (regCount == 2)
+                                        {
+                                            var regAddr = Modbus.ModifyToModbusRegisterAddress(startAddr, ModbusTable.Holdings);
+                                            var value = (float)Modbus.TypedValueFromRegistersArray(nodeAddr, regAddr, typeof(float));
+                                            Modbus.SetParamValue(new ParamAddr(nodeAddr, regAddr), string.Format(CultureInfo.GetCultureInfo("en-US"), "{0}", value));
                                         }
                                         //-------------------
                                         answer = new List<byte>();

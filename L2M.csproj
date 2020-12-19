@@ -50,6 +50,7 @@
     <Compile Include="LogikaParam.cs" />
     <Compile Include="Modbus.cs" />
     <Compile Include="ModbusTable.cs" />
+    <Compile Include="ParamAddr.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="ProjectInstaller.cs">
       <SubType>Component</SubType>
