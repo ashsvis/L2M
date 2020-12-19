@@ -218,6 +218,8 @@ namespace L2M
                         Thread.Sleep(500);
                         if (socket.Connected)
                         {
+                            //Logika.WriteToIndexArray(socket, 1, 3, 1, 125, 5, 150, "1.939");
+
                             foreach (var p in parameters.Parameters)
                             {
                                 switch (p.ParameterKind)
