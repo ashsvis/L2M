@@ -9,6 +9,30 @@ namespace L2M
 {
     public static class Logika
     {
+        public static void WriteToParameter(Socket socket, byte dad, byte sad, int channel, int parameter, int answerWait, string value)
+        {
+            socket.Send(PrepareToWriteParameter(dad, sad, channel, parameter, value));
+            Thread.Sleep(answerWait);
+            var buff = new byte[8192];
+            var numBytes = socket.Receive(buff);
+            if (numBytes > 0)
+            {
+                var answer = CleanAnswer(buff);
+                if (CheckAnswer(answer))
+                {
+                    var result = EncodeWriteParameter(answer);
+                    if (result.Dad == dad && result.Sad == sad && result.Fnc == 0x7f &&
+                        result.Channel == channel && result.Parameter == parameter)
+                    {
+                        if (!string.IsNullOrWhiteSpace(result.Value))
+                            throw new Exception($"Logika DAD:{dad} {channel}.{parameter} {result.Value}");
+                    }
+                }
+                else
+                    throw new Exception($"Logika DAD:{dad} {channel}.{parameter} checksumm error");
+            }
+        }
+
         public static void WriteToIndexArray(Socket socket, byte dad, byte sad, int channel, int arrayNumber, int arrayIndex, int answerWait, string value)
         {
             socket.Send(PrepareToWriteArrayIndex(dad, sad, channel, arrayNumber, arrayIndex, value));
@@ -115,6 +139,49 @@ namespace L2M
             return new AnswerData();
         }
 
+        private static AnswerData EncodeWriteParameter(byte[] buff)
+        {
+            var arr = Unstuff(buff);
+            // разборка телеграммы
+            var s = cp866unicode.UnicodeString(arr);
+            var sft = s.Split('\f').Select(x => x.Split(new[] { '\t' }, StringSplitOptions.RemoveEmptyEntries)).ToList();
+            // [0] - SOH; [1] - DAD; [2] - SAD; [3] - IS1; [4] - FNC
+            byte dad = 0;
+            byte sad = 0;
+            byte fnc = 0;
+            int chano = -1;
+            int parno = -1;
+            int offset = -1;
+            int count = -1;
+            if (sft.Count > 2)
+            {
+                if (sft[0].Length == 5)
+                {
+                    var headlen = sft[0][0].Length;
+                    if (headlen == 6 && (byte)sft[0][0][0] == SOH && (byte)sft[0][0][3] == ISI)
+                    {
+                        dad = (byte)sft[0][0][1];
+                        sad = (byte)sft[0][0][2];
+                        fnc = (byte)sft[0][0][4];
+                    }
+                    int.TryParse(sft[0][1], out chano);
+                    int.TryParse(sft[0][2], out parno);
+                    int.TryParse(sft[0][3], out offset);
+                    int.TryParse(sft[0][4], out count);
+                }
+            }
+            if (fnc != 0x7f) return new AnswerData();
+            return new AnswerData
+            {
+                Dad = sad,
+                Sad = dad,
+                Fnc = fnc,
+                Channel = chano,
+                Parameter = parno,
+                Value = sft[1].Length > 0 ? $"{sft[1]?[0]}" : ""
+            };
+        }
+
         static AnswerData EncodeWriteIndexAnswer(IEnumerable<byte> buff)
         {
             var arr = Unstuff(buff);
@@ -171,6 +238,31 @@ namespace L2M
             list.Add(HT);
             list.AddRange(cp866unicode.OemString($"{count}"));
             list.Add(FF);
+            list.Add(DLE); list.Add(ETX);
+            // контрольная сумма
+            byte[] crcbuff = list.ToArray();
+            var arg = new byte[crcbuff.Length - 2];
+            Array.Copy(crcbuff, 2, arg, 0, crcbuff.Length - 2);
+            var crc = CrCode(arg);
+            list.Add((byte)(crc >> 8)); // high crc parth
+            list.Add((byte)(crc & 0xff)); // low crc parth
+            return list.ToArray();
+        }
+
+        private static byte[] PrepareToWriteParameter(byte dad, byte sad, int channel, int parameter, string value)
+        {
+            byte FNC = 0x03; // код функции для записи значения параметра
+            var list = new List<byte> { DLE, SOH, dad, sad, DLE, ISI, FNC, DLE, STX };
+            list.Add(HT);
+            list.AddRange(cp866unicode.OemString($"{channel}"));
+            list.Add(HT);
+            list.AddRange(cp866unicode.OemString($"{parameter}"));
+            list.Add(FF);
+
+            list.Add(HT);
+            list.AddRange(cp866unicode.OemString(value));
+            list.Add(FF);
+
             list.Add(DLE); list.Add(ETX);
             // контрольная сумма
             byte[] crcbuff = list.ToArray();

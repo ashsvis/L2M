@@ -225,6 +225,15 @@ namespace L2M
                                 switch (p.ParameterKind)
                                 {
                                     case LogikaParam.Parameter:
+                                        if (paramsToWriteExists && p.ModbusTable == ModbusTable.Holdings)
+                                        {
+                                            var value = Modbus.GetParamValue(new ParamAddr(p.NodeAddr,
+                                                Modbus.ModifyToModbusRegisterAddress(p.StartAddr, ModbusTable.Holdings)));
+                                            if (!string.IsNullOrWhiteSpace(value))
+                                            {
+                                                Logika.WriteToParameter(socket, p.Dad, p.Sad, p.Channel, p.Parameter, p.AnswerWait, value);
+                                            }
+                                        }
                                         Logika.FetchParameter(socket, p.Dad, p.Sad, p.Channel, p.Parameter,
                                                               p.NodeAddr, p.ModbusTable, p.StartAddr, p.FormatData, p.AnswerWait);
                                         break;
