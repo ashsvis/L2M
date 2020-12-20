@@ -219,18 +219,9 @@ namespace L2M
                         Thread.Sleep(500);
                         if (socket.Connected)
                         {
+                            var paramsToWriteExists = Modbus.ParamsToWriteExists();
                             foreach (var p in parameters.Parameters)
                             {
-                                if (p.ModbusTable == ModbusTable.Holdings)
-                                {
-                                    var regAddr = Modbus.ModifyToModbusRegisterAddress(p.StartAddr, ModbusTable.Holdings);
-                                    var value = Modbus.GetParamValue(new ParamAddr(p.NodeAddr, regAddr));
-                                    if (!string.IsNullOrWhiteSpace(value))
-                                    {
-                                        //Logika.WriteToIndexArray(socket, dad: 1, sad: 3, channel: 1, arrayNumber: 125, arrayIndex: 5, answerWait: 150, value: "1.939");
-                                        Logika.WriteToIndexArray(socket, p.Dad, p.Sad, p.Channel, p.Parameter, p.ArrayIndexNumber, p.AnswerWait, value);
-                                    }
-                                }
                                 switch (p.ParameterKind)
                                 {
                                     case LogikaParam.Parameter:
@@ -238,8 +229,20 @@ namespace L2M
                                                               p.NodeAddr, p.ModbusTable, p.StartAddr, p.FormatData, p.AnswerWait);
                                         break;
                                     case LogikaParam.IndexArray:
-                                        Logika.FetchIndexArray(socket, p.Dad, p.Sad, p.Channel, p.Parameter, p.ArrayIndexNumber,
-                                                              p.NodeAddr, p.ModbusTable, p.StartAddr, p.FormatData, p.AnswerWait);
+                                        {
+                                            if (paramsToWriteExists && p.ModbusTable == ModbusTable.Holdings)
+                                            {
+                                                var value = Modbus.GetParamValue(new ParamAddr(p.NodeAddr, 
+                                                    Modbus.ModifyToModbusRegisterAddress(p.StartAddr, ModbusTable.Holdings)));
+                                                if (!string.IsNullOrWhiteSpace(value))
+                                                {
+                                                    //Logika.WriteToIndexArray(socket, dad: 1, sad: 3, channel: 1, arrayNumber: 125, arrayIndex: 5, answerWait: 150, value: "1.939");
+                                                    Logika.WriteToIndexArray(socket, p.Dad, p.Sad, p.Channel, p.Parameter, p.ArrayIndexNumber, p.AnswerWait, value);
+                                                }
+                                            }
+                                            Logika.FetchIndexArray(socket, p.Dad, p.Sad, p.Channel, p.Parameter, p.ArrayIndexNumber,
+                                                                  p.NodeAddr, p.ModbusTable, p.StartAddr, p.FormatData, p.AnswerWait);
+                                        }
                                         break;
                                 }
                             }

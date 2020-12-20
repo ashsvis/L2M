@@ -19,6 +19,11 @@ namespace L2M
             writers.AddOrUpdate(param, value, (k, v) => value);
         }
 
+        public static bool ParamsToWriteExists()
+        {
+            return writers.Count > 0;
+        }
+
         public static string GetParamValue(ParamAddr param)
         {
             if (writers.TryGetValue(param, out string value))
