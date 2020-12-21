@@ -99,6 +99,13 @@ namespace L2M
         private static IEnumerable<RequestData> FillParameters(XElement parentElement)
         {
             var parameters = new List<RequestData>();
+            AddLogikaItems(parentElement, parameters);
+            AddLogikaIndexArrays(parentElement, parameters);
+            return parameters;
+        }
+
+        private static void AddLogikaItems(XElement parentElement, List<RequestData> parameters)
+        {
             byte dad = 0, sad = 0, nodeAddr = 0;
             int channel = 0, parameter = 0, answerWait = 0, arrayIndexNumber = 0;
             ModbusTable modbusTable = ModbusTable.None;
@@ -126,13 +133,13 @@ namespace L2M
                 }
                 else
                 {
-                    element = item.Element("IndexArray");
+                    element = item.Element("ArrayNumber");
                     if (element != null)
                     {
                         paramKind = LogikaParam.IndexArray;
                         if (!int.TryParse(element.Value, out parameter))
                             good = false;
-                        element = item.Element("ArrayIndexNumber");
+                        element = item.Element("IndexNumber");
                         if (element == null || !int.TryParse(element.Value, out arrayIndexNumber))
                             good = false;
 
@@ -140,7 +147,6 @@ namespace L2M
                     else
                         good = false;
                 }
-
                 element = item.Element("ModbusNode");
                 if (element == null || !byte.TryParse(element.Value, out nodeAddr))
                     good = false;
@@ -189,7 +195,106 @@ namespace L2M
                     });
                 }
             }
-            return parameters;
+        }
+
+        private static void AddLogikaIndexArrays(XElement parentElement, List<RequestData> parameters)
+        {
+            byte dad = 0, sad = 0, nodeAddr = 0;
+            int channel = 0, parameter = 0, answerWait = 0, arrayFirstIndex = 0, arrayItemsCount = 0;
+            ModbusTable modbusTable = ModbusTable.None;
+            LogikaParam paramKind = LogikaParam.Parameter;
+            ushort startAddr = 0;
+            string dataFormat = "";
+            bool good = true;
+            foreach (var item in parentElement.Element("Runtime").Elements("LogikaIndexArray"))
+            {
+                var element = item.Element("Dad");
+                if (element == null || !byte.TryParse(element.Value, out dad))
+                    good = false;
+                element = item.Element("Sad");
+                if (element == null || !byte.TryParse(element.Value, out sad))
+                    good = false;
+                element = item.Element("Channel");
+                if (element == null || !int.TryParse(element.Value, out channel))
+                    good = false;
+                element = item.Element("Parameter");
+                if (element != null)
+                {
+                    paramKind = LogikaParam.Parameter;
+                    if (!int.TryParse(element.Value, out parameter))
+                        good = false;
+                }
+                else
+                {
+                    element = item.Element("ArrayNumber");
+                    if (element != null)
+                    {
+                        paramKind = LogikaParam.IndexArray;
+                        if (!int.TryParse(element.Value, out parameter))
+                            good = false;
+                        element = item.Element("IndexFirst");
+                        if (element == null || !int.TryParse(element.Value, out arrayFirstIndex))
+                            good = false;
+                        element = item.Element("ItemsCount");
+                        if (element == null || !int.TryParse(element.Value, out arrayItemsCount))
+                            good = false;
+
+                    }
+                    else
+                        good = false;
+                }
+                element = item.Element("ModbusNode");
+                if (element == null || !byte.TryParse(element.Value, out nodeAddr))
+                    good = false;
+                element = item.Element("DataFormat");
+                if (element != null)
+                    dataFormat = element.Value;
+                else
+                    good = false;
+                element = item.Element("AnswerWait");
+                if (element == null || !int.TryParse(element.Value, out answerWait))
+                    good = false;
+                element = item.Element("InputRegister");
+                if (element != null)
+                {
+                    modbusTable = ModbusTable.Inputs;
+                    if (!ushort.TryParse(element.Value, out startAddr))
+                        good = false;
+                }
+                else
+                {
+                    element = item.Element("HoldingRegister");
+                    if (element != null)
+                    {
+                        modbusTable = ModbusTable.Holdings;
+                        if (!ushort.TryParse(element.Value, out startAddr))
+                            good = false;
+                    }
+                    else
+                        good = false;
+                }
+                if (good)
+                {
+                    for (var i = 0; i < arrayItemsCount; i++)
+                    {
+                        parameters.Add(new RequestData()
+                        {
+                            Dad = dad,
+                            Sad = sad,
+                            Channel = channel,
+                            ParameterKind = paramKind,
+                            Parameter = parameter,
+                            ArrayIndexNumber = arrayFirstIndex + i,
+                            NodeAddr = nodeAddr,
+                            StartAddr = startAddr,
+                            ModbusTable = modbusTable,
+                            FormatData = dataFormat,
+                            AnswerWait = answerWait
+                        });
+                        startAddr += 2;
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -328,6 +433,27 @@ namespace L2M
                                 switch (funcCode)
                                 {
                                     case 3: // - read holding registers
+                                        answer = new List<byte>();
+                                        answer.AddRange(BitConverter.GetBytes(Modbus.Swap(header1)));
+                                        answer.AddRange(BitConverter.GetBytes(Modbus.Swap(header2)));
+                                        bytesCount = Convert.ToByte(regCount * 2);
+                                        packetLen = Convert.ToUInt16(bytesCount + 3);
+                                        answer.AddRange(BitConverter.GetBytes(Modbus.Swap(packetLen)));
+                                        answer.Add(nodeAddr);
+                                        answer.Add(funcCode);
+                                        answer.Add(bytesCount);
+                                        //
+
+                                        for (ushort i = 0; i < regCount; i++)
+                                        {
+                                            var regAddr = Modbus.ModifyToModbusRegisterAddress((ushort)(i + startAddr), (ModbusTable)funcCode);
+                                            ushort value = Modbus.GetRegisterValue(nodeAddr, regAddr);
+                                            answer.AddRange(BitConverter.GetBytes(value));
+                                        }
+
+                                        msg = answer.ToArray();
+                                        stream.Write(msg, 0, msg.Length);
+                                        break;
                                     case 4: // - read input registers
                                         answer = new List<byte>();
                                         answer.AddRange(BitConverter.GetBytes(Modbus.Swap(header1)));
@@ -371,14 +497,14 @@ namespace L2M
                                         {
                                             var regAddr = Modbus.ModifyToModbusRegisterAddress(addr, ModbusTable.Holdings);
                                             ushort value = BitConverter.ToUInt16(bytes, n);
-                                            Modbus.SetRegisterValue(nodeAddr, regAddr, value, true);
+                                            Modbus.SetRegisterValue(nodeAddr, regAddr, value);
                                             n += 2;  // коррекция позиции смещения в принятых данных для записи
                                             addr += 1;
                                         }
                                         if (regCount == 2)
                                         {
                                             var regAddr = Modbus.ModifyToModbusRegisterAddress(startAddr, ModbusTable.Holdings);
-                                            var value = (float)Modbus.TypedValueFromRegistersArray(nodeAddr, regAddr, typeof(float), true);
+                                            var value = (float)Modbus.TypedValueFromRegistersArray(nodeAddr, regAddr, typeof(float));
                                             Modbus.SetParamValue(new ParamAddr(nodeAddr, regAddr), string.Format(CultureInfo.GetCultureInfo("en-US"), "{0}", value));
                                         }
                                         //-------------------
