@@ -55,10 +55,19 @@ namespace L2M
             // Если запускает пользователь сам
             if (Environment.UserInteractive)
             {
-                Console.WriteLine("MODBUS listening service loaded.");
-                Console.WriteLine("Ver. 0.4\n");
-                Console.WriteLine("Press any key for exit...");
-                Console.ReadKey();
+                var s = WcfEventService.EventService;
+                s.Start();
+                try
+                {
+                    Console.WriteLine("MODBUS listening service loaded.");
+                    Console.WriteLine("Ver. 0.4\n");
+                    Console.WriteLine("Press any key for exit...");
+                    Console.ReadKey();
+                }
+                finally
+                {
+                    s.Stop();
+                }
             }
             else
             {
