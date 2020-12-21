@@ -294,7 +294,6 @@ namespace L2M
                         Thread.Sleep(1);
                         if (!worker.CancellationPending) continue;
                         listener.Stop();
-                        //TranslateChannelMessage(parameters.ChannelId, "Not listening");
                         worker.ReportProgress(0, "Not listening");
                         return;
                     }
@@ -313,9 +312,6 @@ namespace L2M
                                 Thread.Sleep(1);
                                 var list = new List<string>();
                                 for (var i = 0; i < count; i++) list.Add(string.Format("{0}", bytes[i]));
-                                
-                                //worker.ReportProgress(0, "Q:" + string.Join(",", list));
-
                                 if (count < 6) continue;
                                 var header1 = Convert.ToUInt16(bytes[0] * 256 + bytes[1]);
                                 var header2 = Convert.ToUInt16(bytes[2] * 256 + bytes[3]);
@@ -343,7 +339,6 @@ namespace L2M
                                         answer.Add(funcCode);
                                         answer.Add(bytesCount);
                                         //
-                                        //worker.ReportProgress(nodeAddr, $"node:{nodeAddr} func:{funcCode} addr:{startAddr} count:{regCount}");
 
                                         for (ushort i = 0; i < regCount; i++)
                                         {
@@ -355,20 +350,20 @@ namespace L2M
                                         msg = answer.ToArray();
                                         stream.Write(msg, 0, msg.Length);
                                         break;
-                                    case 6: // write one register
-                                        Modbus.SetRegisterValue(nodeAddr, Modbus.ModifyToModbusRegisterAddress(startAddr, ModbusTable.Holdings), singleValue);
-                                        //-------------------
-                                        answer = new List<byte>();
-                                        answer.AddRange(BitConverter.GetBytes(Modbus.Swap(header1)));
-                                        answer.AddRange(BitConverter.GetBytes(Modbus.Swap(header2)));
-                                        answer.AddRange(BitConverter.GetBytes(Modbus.Swap(6)));
-                                        answer.Add(nodeAddr);
-                                        answer.Add(funcCode);
-                                        answer.AddRange(BitConverter.GetBytes(Modbus.Swap(startAddr)));
-                                        answer.AddRange(BitConverter.GetBytes(Modbus.Swap(regCount)));
-                                        msg = answer.ToArray();
-                                        stream.Write(msg, 0, msg.Length);
-                                        break;
+                                    //case 6: // write one register
+                                    //    Modbus.SetRegisterValue(nodeAddr, Modbus.ModifyToModbusRegisterAddress(startAddr, ModbusTable.Holdings), singleValue);
+                                    //    //-------------------
+                                    //    answer = new List<byte>();
+                                    //    answer.AddRange(BitConverter.GetBytes(Modbus.Swap(header1)));
+                                    //    answer.AddRange(BitConverter.GetBytes(Modbus.Swap(header2)));
+                                    //    answer.AddRange(BitConverter.GetBytes(Modbus.Swap(6)));
+                                    //    answer.Add(nodeAddr);
+                                    //    answer.Add(funcCode);
+                                    //    answer.AddRange(BitConverter.GetBytes(Modbus.Swap(startAddr)));
+                                    //    answer.AddRange(BitConverter.GetBytes(Modbus.Swap(regCount)));
+                                    //    msg = answer.ToArray();
+                                    //    stream.Write(msg, 0, msg.Length);
+                                    //    break;
                                     case 16: // write several registers
                                         var n = 13;
                                         ushort addr = startAddr;
@@ -376,14 +371,14 @@ namespace L2M
                                         {
                                             var regAddr = Modbus.ModifyToModbusRegisterAddress(addr, ModbusTable.Holdings);
                                             ushort value = BitConverter.ToUInt16(bytes, n);
-                                            Modbus.SetRegisterValue(nodeAddr, regAddr, value);
+                                            Modbus.SetRegisterValue(nodeAddr, regAddr, value, true);
                                             n += 2;  // коррекция позиции смещения в принятых данных для записи
                                             addr += 1;
                                         }
                                         if (regCount == 2)
                                         {
                                             var regAddr = Modbus.ModifyToModbusRegisterAddress(startAddr, ModbusTable.Holdings);
-                                            var value = (float)Modbus.TypedValueFromRegistersArray(nodeAddr, regAddr, typeof(float));
+                                            var value = (float)Modbus.TypedValueFromRegistersArray(nodeAddr, regAddr, typeof(float), true);
                                             Modbus.SetParamValue(new ParamAddr(nodeAddr, regAddr), string.Format(CultureInfo.GetCultureInfo("en-US"), "{0}", value));
                                         }
                                         //-------------------

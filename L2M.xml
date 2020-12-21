@@ -86,6 +86,16 @@
           <DataFormat>IEEEFP</DataFormat>
           <AnswerWait>150</AnswerWait>
         </LogikaItem>
+        <LogikaItem>
+          <Dad>1</Dad>
+          <Sad>3</Sad>
+          <Channel>0</Channel>
+          <Parameter>12</Parameter>
+          <ModbusNode>1</ModbusNode>
+          <HoldingRegister>6</HoldingRegister>
+          <DataFormat>IEEEFP</DataFormat>
+          <AnswerWait>150</AnswerWait>
+        </LogikaItem>
       </Runtime>
     </ChannelTcp>
   </Fetching>
