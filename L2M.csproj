@@ -45,7 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AnswerData.cs" />
-    <Compile Include="cp866unicode.cs" />
+    <Compile Include="LogikaFetch\cp866unicode.cs" />
     <Compile Include="LogikaFetch\Logika.cs" />
     <Compile Include="LogikaFetch\LogikaParam.cs" />
     <Compile Include="ModbusListen\Modbus.cs" />
@@ -59,8 +59,8 @@
       <DependentUpon>ProjectInstaller.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RequestData.cs" />
-    <Compile Include="TcpTuning.cs" />
+    <Compile Include="Common\RequestData.cs" />
+    <Compile Include="Common\TcpTuning.cs" />
     <Compile Include="WinService.cs">
       <SubType>Component</SubType>
     </Compile>
