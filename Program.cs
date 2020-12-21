@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DataEventClient;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
@@ -14,8 +15,13 @@ namespace L2M
 {
     class Program
     {
+        public static EventClient LocEvClient;
+
         static void Main(string[] args)
         {
+            LocEvClient = new EventClient();
+            LocEvClient.Connect(new[] { "config", "fetching", "archives" }, PropertyUpdate, ShowError, UpdateLocalConnectionStatus);
+
             var configName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "L2M.xml");
             // чтение конфигурационного файла
             var xdoc = XDocument.Load(configName);
@@ -48,7 +54,6 @@ namespace L2M
                     SendTimeout = sendTimeout,
                     ReceiveTimeout = receiveTimeout,
                     Parameters = parameters,
-                    //FetchArchives = fetchArchives
                 };
                 fetcher.RunWorkerAsync(tcptuning);
             }
@@ -73,6 +78,30 @@ namespace L2M
             {
                 var servicesToRun = new ServiceBase[] { new WinService() };
                 ServiceBase.Run(servicesToRun);
+            }
+        }
+
+        static void UpdateLocalConnectionStatus(Guid clientId, ClientConnectionStatus status)
+        {
+            if (status == ClientConnectionStatus.Opened)
+            {
+            }
+        }
+
+        static void ShowError(string errormessage)
+        {
+        }
+
+        static void PropertyUpdate(DateTime servertime, string category, string pointname, string propname, string value)
+        {
+            switch (category.ToLower())
+            {
+                case "fetching":
+                    break;
+                case "archives":
+                    break;
+                case "config":
+                    break;
             }
         }
 
@@ -361,6 +390,7 @@ namespace L2M
                             var paramsToWriteExists = Modbus.ParamsToWriteExists();
                             FetchItems(parameters, socket, paramsToWriteExists, true);
                         }
+                        //Console.WriteLine("Опрос архива.");
                     }
                 }
                 catch (Exception ex)

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="02213e8d-dec6-49d1-80c3-809a57eab60f" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="ae5c5083-a7a5-4a53-9b50-ee8f803eea6c" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
   <ClientOptions>
     <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
     <GenerateTaskBasedAsynchronousMethod>true</GenerateTaskBasedAsynchronousMethod>
@@ -22,10 +22,10 @@
     <MetadataSource Address="net.pipe://localhost/ModbusIntegrationServer/mex" Protocol="mex" SourceId="1" />
   </MetadataSources>
   <Metadata>
-    <MetadataFile FileName="service.wsdl" MetadataType="Wsdl" ID="6a1e55ba-49f9-44b9-856f-3e658512836e" SourceId="1" SourceUrl="net.pipe://localhost/ModbusIntegrationServer/mex" />
-    <MetadataFile FileName="service.xsd" MetadataType="Schema" ID="e7da39a2-d5d0-4156-9cc9-6d8239817788" SourceId="1" SourceUrl="net.pipe://localhost/ModbusIntegrationServer/mex" />
-    <MetadataFile FileName="service1.xsd" MetadataType="Schema" ID="53183366-e816-4cfe-8a84-36ad814c2b0f" SourceId="1" SourceUrl="net.pipe://localhost/ModbusIntegrationServer/mex" />
-    <MetadataFile FileName="Arrays.xsd" MetadataType="Schema" ID="350314cb-3792-4040-b1f8-0ccc52ceb4df" SourceId="1" SourceUrl="net.pipe://localhost/ModbusIntegrationServer/mex" />
+    <MetadataFile FileName="service.wsdl" MetadataType="Wsdl" ID="0474064b-fb7a-4b41-bf51-8e950980ee18" SourceId="1" SourceUrl="net.pipe://localhost/ModbusIntegrationServer/mex" />
+    <MetadataFile FileName="service.xsd" MetadataType="Schema" ID="f7a5ab12-aac9-4fa6-adb6-a49e33f32b41" SourceId="1" SourceUrl="net.pipe://localhost/ModbusIntegrationServer/mex" />
+    <MetadataFile FileName="service1.xsd" MetadataType="Schema" ID="7e5765e6-4d3d-47be-832b-6c257af2d104" SourceId="1" SourceUrl="net.pipe://localhost/ModbusIntegrationServer/mex" />
+    <MetadataFile FileName="Arrays.xsd" MetadataType="Schema" ID="950fe8a4-bae0-442c-8488-157345b922b3" SourceId="1" SourceUrl="net.pipe://localhost/ModbusIntegrationServer/mex" />
   </Metadata>
   <Extensions>
     <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />

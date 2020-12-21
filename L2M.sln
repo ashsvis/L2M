@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "L2M", "L2M.csproj", "{52A82
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConfigL2M", "ConfigL2M\ConfigL2M.csproj", "{7E8A6B2E-F6C2-475D-9DA8-228626551C05}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataEventClient", "DataEventClient\DataEventClient.csproj", "{9B00C9BC-06D2-4FEB-BF6F-A23A863B38E5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{7E8A6B2E-F6C2-475D-9DA8-228626551C05}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7E8A6B2E-F6C2-475D-9DA8-228626551C05}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7E8A6B2E-F6C2-475D-9DA8-228626551C05}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9B00C9BC-06D2-4FEB-BF6F-A23A863B38E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9B00C9BC-06D2-4FEB-BF6F-A23A863B38E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9B00C9BC-06D2-4FEB-BF6F-A23A863B38E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9B00C9BC-06D2-4FEB-BF6F-A23A863B38E5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

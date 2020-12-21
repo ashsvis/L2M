@@ -74,6 +74,9 @@ namespace L2M
                         result.Channel == channel && result.Parameter == arrayNumber)
                     {
                         CheckAndStoreData(nodeAddr, modbusTable, startAddr, dataFormat, result);
+
+                        Program.LocEvClient.UpdateProperty("fetching", $"ModbusTcp Node:{nodeAddr} {modbusTable}:{startAddr}",
+                            $"Logika {dad}.{channel}.{arrayNumber}.{arrayIndex}", $"{result.Value} {result.Unit} {result.Time}");
                     }
                 }
                 else
@@ -320,6 +323,9 @@ namespace L2M
                         result.Channel == channel && result.Parameter == parameter)
                     {
                         CheckAndStoreData(nodeAddr, modbusTable, startAddr, dataFormat, result);
+
+                        Program.LocEvClient.UpdateProperty("fetching", $"ModbusTcp Node:{nodeAddr} {modbusTable}:{startAddr}", 
+                            $"Logika {dad}.{channel}.{parameter}", $"{result.Value} {result.Unit} {result.Time}");
                     }
                 }
                 else

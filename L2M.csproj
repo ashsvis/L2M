@@ -87,6 +87,11 @@
       <DependentUpon>ProjectInstaller.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="DataEventClient\DataEventClient.csproj">
+      <Project>{9b00c9bc-06d2-4feb-bf6f-a23a863b38e5}</Project>
+      <Name>DataEventClient</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

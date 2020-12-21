@@ -4,7 +4,7 @@ using System.ServiceModel.Channels;
 using System.Threading;
 using System.Timers;
 
-namespace ConfigL2M
+namespace DataEventClient
 {
     public enum ClientConnectionStatus
     {
@@ -111,14 +111,14 @@ namespace ConfigL2M
 
     public delegate void ClientFileReceivedWrapper(string tarfilename, int percent, bool complete);
 
-    public class CallbackHandler : ClientServiceReference.IClientEventServiceCallback, IDisposable
+    public class CallbackHandler : DataEventClient.ClientServiceReference.IClientEventServiceCallback, IDisposable
     {
         private readonly Guid _clientId;
         private readonly TimeSpan _timeout = new TimeSpan(0, 1, 30);
         private readonly InstanceContext _site;
         private readonly Binding _binding;
         private readonly ConnectionStatusWrapper _connectionStatus;
-        private readonly ClientServiceReference.ClientEventServiceClient _proxy;
+        private readonly DataEventClient.ClientServiceReference.ClientEventServiceClient _proxy;
 
         public CallbackHandler(Guid clientId, ConnectionStatusWrapper connectionStatus)
         {
@@ -133,7 +133,7 @@ namespace ConfigL2M
                 ReceiveTimeout = _timeout,
                 CloseTimeout = _timeout
             };
-            _proxy = new ClientServiceReference.ClientEventServiceClient(_site, _binding, new EndpointAddress(uri));
+            _proxy = new DataEventClient.ClientServiceReference.ClientEventServiceClient(_site, _binding, new EndpointAddress(uri));
 
             _proxy.InnerDuplexChannel.Opened += (sender, args) =>
             {

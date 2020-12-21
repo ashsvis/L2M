@@ -8,11 +8,11 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ConfigL2M.ClientServiceReference {
+namespace DataEventClient.ClientServiceReference {
     
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    [System.ServiceModel.ServiceContractAttribute(ConfigurationName="ClientServiceReference.IClientEventService", CallbackContract=typeof(ConfigL2M.ClientServiceReference.IClientEventServiceCallback))]
+    [System.ServiceModel.ServiceContractAttribute(ConfigurationName="ClientServiceReference.IClientEventService", CallbackContract=typeof(DataEventClient.ClientServiceReference.IClientEventServiceCallback))]
     public interface IClientEventService {
         
         [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IClientEventService/RegisterForUpdates")]
@@ -48,12 +48,12 @@ namespace ConfigL2M.ClientServiceReference {
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public interface IClientEventServiceChannel : ConfigL2M.ClientServiceReference.IClientEventService, System.ServiceModel.IClientChannel {
+    public interface IClientEventServiceChannel : DataEventClient.ClientServiceReference.IClientEventService, System.ServiceModel.IClientChannel {
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public partial class ClientEventServiceClient : System.ServiceModel.DuplexClientBase<ConfigL2M.ClientServiceReference.IClientEventService>, ConfigL2M.ClientServiceReference.IClientEventService {
+    public partial class ClientEventServiceClient : System.ServiceModel.DuplexClientBase<DataEventClient.ClientServiceReference.IClientEventService>, DataEventClient.ClientServiceReference.IClientEventService {
         
         public ClientEventServiceClient(System.ServiceModel.InstanceContext callbackInstance) : 
                 base(callbackInstance) {
