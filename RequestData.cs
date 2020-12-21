@@ -8,6 +8,7 @@
         public LogikaParam ParameterKind { get; set; }
         public int Parameter { get; set; }
         public int ArrayIndexNumber { get; set; }
+        public bool Archived { get; set; }
         public byte NodeAddr { get; set; }
         public ModbusTable ModbusTable { get; set; }
         public ushort StartAddr { get; set; }
