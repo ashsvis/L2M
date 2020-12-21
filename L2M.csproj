@@ -46,11 +46,11 @@
   <ItemGroup>
     <Compile Include="AnswerData.cs" />
     <Compile Include="cp866unicode.cs" />
-    <Compile Include="Logika.cs" />
-    <Compile Include="LogikaParam.cs" />
-    <Compile Include="Modbus.cs" />
-    <Compile Include="ModbusTable.cs" />
-    <Compile Include="ParamAddr.cs" />
+    <Compile Include="LogikaFetch\Logika.cs" />
+    <Compile Include="LogikaFetch\LogikaParam.cs" />
+    <Compile Include="ModbusListen\Modbus.cs" />
+    <Compile Include="ModbusListen\ModbusTable.cs" />
+    <Compile Include="ModbusListen\ParamAddr.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="ProjectInstaller.cs">
       <SubType>Component</SubType>
@@ -82,5 +82,6 @@
       <DependentUpon>ProjectInstaller.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
