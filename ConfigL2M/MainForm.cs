@@ -70,33 +70,62 @@ namespace ConfigL2M
                     var method1 = new MethodInvoker(() =>
                     {
                         // для работы списка свойств
-                        var key = $"{pointname}.{propname}";
+                        var key = $"{pointname}:{propname}";
                         if (!fetching.ContainsKey(key))
-                            fetching.Add(key, value);
+                            fetching.Add(key, value?.TrimEnd());
                         else
-                            fetching[key] = value;
+                            fetching[key] = value?.TrimEnd();
 
-                        Text = $"{category}:{key}={value}";
+                        //Text = $"{category}:{key}={value}";
 
-                        //var found = false;
-                        //foreach (var lvi in lvValues.Items.Cast<ListViewItem>())
-                        //{
-                        //    if ($"{lvi.Tag}" == key)
-                        //    {
-                        //        found = true;
-                        //        lvi.SubItems[1].Text = value;
-                        //        break;
-                        //    }
-                        //}
-                        //if (!found && Path.GetDirectoryName(pointname) == $"{selectedPath}")
-                        //{
-                        //    var lvi = new ListViewItem(Path.GetFileName(key));
-                        //    lvi.SubItems.Add(value);
-                        //    lvi.Tag = key;
-                        //    lvValues.Items.Add(lvi);
-                        //    lvValues.Sort();
-                        //}
+                        var keys = key.Split(':');
+                        var node = keys[0];
+                        var table = keys[1];
+                        var index = keys[2];
+                        TreeNode selected;
 
+                        tvTree.BeginUpdate();
+                        tvTree.SuspendLayout();
+                        try
+                        {
+                            var nodes = tvTree.Nodes.Find(node, false);
+                            if (nodes.Length == 0)
+                            {
+                                var nd = new TreeNode(node) { Name = node };
+                                tvTree.Nodes.Add(nd);
+                                selected = nd;
+                            }
+                            else
+                                selected = nodes[0];
+
+                            nodes = selected.Nodes.Find(table, false);
+                            if (nodes.Length == 0)
+                            {
+                                var nd = new TreeNode(table) { Name = table };
+                                selected.Nodes.Add(nd);
+                                selected = nd;
+                            }
+                            else
+                                selected = nodes[0];
+
+                            nodes = selected.Nodes.Find(index, false);
+                            if (nodes.Length == 0)
+                            {
+                                var nd = new TreeNode($"{index} {value?.TrimEnd()}") { Name = index };
+                                selected.Nodes.Add(nd);
+                                selected = nd;
+                            }
+                            else
+                            {
+                                selected = nodes[0];
+                                selected.Text = $"{index} {value?.TrimEnd()}";
+                            }
+                        }
+                        finally
+                        {
+                            tvTree.ResumeLayout();
+                            tvTree.EndUpdate();
+                        }
                     });
                     if (InvokeRequired)
                         BeginInvoke(method1);
