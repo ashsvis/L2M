@@ -5,6 +5,7 @@ namespace L2M
 {
     partial class WinService : ServiceBase
     {
+        private WcfEventService _wcf;
 
         public WinService()
         {
@@ -15,8 +16,8 @@ namespace L2M
         {
             try
             {
-
-
+                _wcf = WcfEventService.EventService;
+                _wcf.Start();
             }
             catch (Exception ex)
             {
@@ -27,7 +28,10 @@ namespace L2M
 
         protected override void OnStop()
         {
-
+            if (_wcf != null)
+            {
+                _wcf.Stop();
+            }
         }
     }
 }

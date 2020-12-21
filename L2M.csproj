@@ -35,6 +35,7 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Core" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -45,6 +46,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AnswerData.cs" />
+    <Compile Include="DataEvents\IClientCallback.cs" />
+    <Compile Include="DataEvents\IClientEventService.cs" />
+    <Compile Include="DataEvents\ModbusIntegratorEventService.cs" />
+    <Compile Include="DataEvents\WcfEventService.cs" />
     <Compile Include="LogikaFetch\cp866unicode.cs" />
     <Compile Include="LogikaFetch\Logika.cs" />
     <Compile Include="LogikaFetch\LogikaParam.cs" />
