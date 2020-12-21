@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.28307.757
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "L2M", "L2M.csproj", "{52A825BE-88DC-4AA3-8D44-41214C3F4827}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConfigL2M", "ConfigL2M\ConfigL2M.csproj", "{7E8A6B2E-F6C2-475D-9DA8-228626551C05}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{52A825BE-88DC-4AA3-8D44-41214C3F4827}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{52A825BE-88DC-4AA3-8D44-41214C3F4827}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{52A825BE-88DC-4AA3-8D44-41214C3F4827}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E8A6B2E-F6C2-475D-9DA8-228626551C05}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E8A6B2E-F6C2-475D-9DA8-228626551C05}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E8A6B2E-F6C2-475D-9DA8-228626551C05}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E8A6B2E-F6C2-475D-9DA8-228626551C05}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

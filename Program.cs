@@ -56,7 +56,7 @@ namespace L2M
             if (Environment.UserInteractive)
             {
                 Console.WriteLine("MODBUS listening service loaded.");
-                Console.WriteLine("Ver. 0.3\n");
+                Console.WriteLine("Ver. 0.4\n");
                 Console.WriteLine("Press any key for exit...");
                 Console.ReadKey();
             }
