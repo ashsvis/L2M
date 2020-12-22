@@ -83,9 +83,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <WCFMetadata Include="Connected Services\" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\DataEventClient\DataEventClient.csproj">
       <Project>{9b00c9bc-06d2-4feb-bf6f-a23a863b38e5}</Project>
       <Name>DataEventClient</Name>

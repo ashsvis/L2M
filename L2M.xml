@@ -68,6 +68,61 @@
           <DataFormat>IEEEFP</DataFormat>
           <AnswerWait>150</AnswerWait>
         </LogikaItem>
+        <!-- Текущая дата прибора -->
+        <LogikaItem>
+          <Dad>1</Dad>
+          <Sad>3</Sad>
+          <Channel>0</Channel>
+          <Parameter>60</Parameter>
+          <ModbusNode>1</ModbusNode>
+          <InputRegister>10</InputRegister>
+          <DataFormat>IEEEFP</DataFormat>
+          <AnswerWait>150</AnswerWait>
+        </LogikaItem>
+        <!-- Текущее время прибора -->
+        <LogikaItem>
+          <Dad>1</Dad>
+          <Sad>3</Sad>
+          <Channel>0</Channel>
+          <Parameter>61</Parameter>
+          <ModbusNode>1</ModbusNode>
+          <InputRegister>12</InputRegister>
+          <DataFormat>IEEEFP</DataFormat>
+          <AnswerWait>150</AnswerWait>
+        </LogikaItem>
+        <!-- Номер прибора -->
+        <LogikaItem>
+          <Dad>1</Dad>
+          <Sad>3</Sad>
+          <Channel>0</Channel>
+          <Parameter>8</Parameter>
+          <ModbusNode>1</ModbusNode>
+          <InputRegister>14</InputRegister>
+          <DataFormat>IEEEFP</DataFormat>
+          <AnswerWait>150</AnswerWait>
+        </LogikaItem>
+        <!-- Расчетный час для формирования архивов за сутки -->
+        <LogikaItem>
+          <Dad>1</Dad>
+          <Sad>3</Sad>
+          <Channel>0</Channel>
+          <Parameter>24</Parameter>
+          <ModbusNode>1</ModbusNode>
+          <InputRegister>16</InputRegister>
+          <DataFormat>IEEEFP</DataFormat>
+          <AnswerWait>150</AnswerWait>
+        </LogikaItem>
+        <!-- Расчетный день для формирования архивов за месяц -->
+        <LogikaItem>
+          <Dad>1</Dad>
+          <Sad>3</Sad>
+          <Channel>0</Channel>
+          <Parameter>25</Parameter>
+          <ModbusNode>1</ModbusNode>
+          <InputRegister>18</InputRegister>
+          <DataFormat>IEEEFP</DataFormat>
+          <AnswerWait>150</AnswerWait>
+        </LogikaItem>
         <!-- Объемное содержание азота, % -->
         <LogikaItem>
           <Dad>1</Dad>
@@ -152,7 +207,7 @@
           <IndexFirst>1</IndexFirst>
           <ItemsCount>24</ItemsCount>
           <ModbusNode>1</ModbusNode>
-          <InputRegister>100</InputRegister>
+          <InputRegister>200</InputRegister>
           <DataFormat>IEEEFP</DataFormat>
           <AnswerWait>150</AnswerWait>
         </LogikaIndexArray>

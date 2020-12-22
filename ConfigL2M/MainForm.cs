@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using static ConfigL2M.ListViewEx;
 
 namespace ConfigL2M
 {
@@ -18,8 +19,7 @@ namespace ConfigL2M
         {
             InitializeComponent();
             locEvClient = new EventClient();
-            //lvList.Groups.Add("Holdings", "Holdings");
-            //lvList.Groups.Add("Inputs", "Inputs");
+            lvList.SetDoubleBuffered(true);
         }
 
         private void MainForm_Load(object sender, System.EventArgs e)
@@ -176,5 +176,24 @@ namespace ConfigL2M
             throw new NotImplementedException();
         }
 
+        private int _lastColumn = -1;
+
+        private void lvList_ColumnClick(object sender, ColumnClickEventArgs e)
+        {
+            if (_lastColumn != e.Column)
+            {
+                lvList.ListViewItemSorter = new ListViewItemComparer(e.Column);
+                _lastColumn = e.Column;
+            }
+            else
+            {
+                if (lvList.ListViewItemSorter is ListViewItemComparer)
+                    lvList.ListViewItemSorter = new ListViewItemReverseComparer(e.Column);
+                else
+                    lvList.ListViewItemSorter = new ListViewItemComparer(e.Column);
+            }
+            if (lvList.FocusedItem != null)
+                lvList.FocusedItem.EnsureVisible();
+        }
     }
 }
