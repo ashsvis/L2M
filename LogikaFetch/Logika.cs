@@ -76,11 +76,11 @@ namespace L2M
                         CheckAndStoreData(nodeAddr, modbusTable, startAddr, dataFormat, result);
 
                         Program.LocEvClient.UpdateProperty("fetching", $"{nodeAddr}:{modbusTable}:{startAddr}",
-                            $"Logika.{dad}.{channel}.{arrayNumber}.{arrayIndex}", $"{result.Value}\t{result.Unit}\t{result.Time}");
+                            $"Logika {dad}.{channel:00}.{arrayNumber:000}[{arrayIndex:00}]", $"{result.Value}\t{result.Unit}\t{result.Time}");
                     }
                 }
                 else
-                    throw new Exception($"Logika DAD:{dad} {channel}.{arrayNumber}.{arrayIndex} checksumm error");
+                    throw new Exception($"Logika {dad}.{channel:00}.{arrayNumber:000}[{arrayIndex:00}] checksumm error");
             }
         }
 
@@ -325,11 +325,11 @@ namespace L2M
                         CheckAndStoreData(nodeAddr, modbusTable, startAddr, dataFormat, result);
 
                         Program.LocEvClient.UpdateProperty("fetching", $"{nodeAddr}:{modbusTable}:{startAddr}", 
-                            $"Logika.{dad}.{channel}.{parameter}", $"{result.Value}\t{result.Unit}\t{result.Time}");
+                            $"Logika {dad}.{channel:00}.{parameter:000}", $"{result.Value}\t{result.Unit}\t{result.Time}");
                     }
                 }
                 else
-                    throw new Exception($"Logika DAD:{dad} {channel}.{parameter} checksumm error");
+                    throw new Exception($"Logika {dad}.{channel:00}.{parameter:000} checksumm error");
             }
         }
 

@@ -13,6 +13,7 @@
       <SendTimeout>3000</SendTimeout>
       <ReceiveTimeout>3000</ReceiveTimeout>
       <Runtime>
+        <!-- Масса газа нарастающим итогом -->
         <LogikaItem>
           <Dad>1</Dad>
           <Sad>3</Sad>
@@ -23,16 +24,18 @@
           <DataFormat>IEEEFP</DataFormat>
           <AnswerWait>150</AnswerWait>
         </LogikaItem>
+        <!-- Температура газа -->
         <LogikaItem>
           <Dad>1</Dad>
           <Sad>3</Sad>
-          <Channel>0</Channel>
-          <Parameter>8</Parameter>
+          <Channel>1</Channel>
+          <Parameter>156</Parameter>
           <ModbusNode>1</ModbusNode>
           <InputRegister>2</InputRegister>
-          <DataFormat>S32B</DataFormat>
+          <DataFormat>IEEEFP</DataFormat>
           <AnswerWait>150</AnswerWait>
         </LogikaItem>
+        <!-- Объем газа при стандартных условиях нарастающим итогом -->
         <LogikaItem>
           <Dad>1</Dad>
           <Sad>3</Sad>
@@ -43,6 +46,7 @@
           <DataFormat>IEEEFP</DataFormat>
           <AnswerWait>150</AnswerWait>
         </LogikaItem>
+        <!-- Объем газа при рабочих условиях нарастающим итогом -->
         <LogikaItem>
           <Dad>1</Dad>
           <Sad>3</Sad>
@@ -53,6 +57,18 @@
           <DataFormat>IEEEFP</DataFormat>
           <AnswerWait>150</AnswerWait>
         </LogikaItem>
+        <!-- Абсолютное давление (для вычислений) -->
+        <LogikaItem>
+          <Dad>1</Dad>
+          <Sad>3</Sad>
+          <Channel>1</Channel>
+          <Parameter>155</Parameter>
+          <ModbusNode>1</ModbusNode>
+          <InputRegister>8</InputRegister>
+          <DataFormat>IEEEFP</DataFormat>
+          <AnswerWait>150</AnswerWait>
+        </LogikaItem>
+        <!-- Объемное содержание азота, % -->
         <LogikaItem>
           <Dad>1</Dad>
           <Sad>3</Sad>
@@ -64,6 +80,7 @@
           <DataFormat>IEEEFP</DataFormat>
           <AnswerWait>150</AnswerWait>
         </LogikaItem>
+        <!-- Объемное содержание диоксида углерода, % -->
         <LogikaItem>
           <Dad>1</Dad>
           <Sad>3</Sad>
@@ -75,6 +92,7 @@
           <DataFormat>IEEEFP</DataFormat>
           <AnswerWait>150</AnswerWait>
         </LogikaItem>
+        <!-- Плотность сухого газа при стандартных условиях, кг/м3 -->
         <LogikaItem>
           <Dad>1</Dad>
           <Sad>3</Sad>
@@ -86,15 +104,198 @@
           <DataFormat>IEEEFP</DataFormat>
           <AnswerWait>150</AnswerWait>
         </LogikaItem>
+        <!-- Архив Часовой средних значений температуры газа -->
+        <LogikaIndexArray>
+          <Dad>1</Dad>
+          <Sad>3</Sad>
+          <Channel>1</Channel>
+          <ArrayNumber>200</ArrayNumber>
+          <IndexFirst>1</IndexFirst>
+          <ItemsCount>24</ItemsCount>
+          <ModbusNode>1</ModbusNode>
+          <InputRegister>100</InputRegister>
+          <DataFormat>IEEEFP</DataFormat>
+          <AnswerWait>150</AnswerWait>
+        </LogikaIndexArray>
+        <!-- Архив Суточный средних значений температуры газа -->
+        <LogikaIndexArray>
+          <Dad>1</Dad>
+          <Sad>3</Sad>
+          <Channel>1</Channel>
+          <ArrayNumber>201</ArrayNumber>
+          <IndexFirst>1</IndexFirst>
+          <ItemsCount>21</ItemsCount>
+          <ModbusNode>1</ModbusNode>
+          <InputRegister>148</InputRegister>
+          <DataFormat>IEEEFP</DataFormat>
+          <AnswerWait>150</AnswerWait>
+        </LogikaIndexArray>
+        <!-- Архив Месячный средних значений температуры газа -->
+        <LogikaIndexArray>
+          <Dad>1</Dad>
+          <Sad>3</Sad>
+          <Channel>1</Channel>
+          <ArrayNumber>202</ArrayNumber>
+          <IndexFirst>1</IndexFirst>
+          <ItemsCount>5</ItemsCount>
+          <ModbusNode>1</ModbusNode>
+          <InputRegister>190</InputRegister>
+          <DataFormat>IEEEFP</DataFormat>
+          <AnswerWait>150</AnswerWait>
+        </LogikaIndexArray>
+        <!-- Архив Часовой значений массы газа -->
+        <LogikaIndexArray>
+          <Dad>1</Dad>
+          <Sad>3</Sad>
+          <Channel>1</Channel>
+          <ArrayNumber>210</ArrayNumber>
+          <IndexFirst>1</IndexFirst>
+          <ItemsCount>24</ItemsCount>
+          <ModbusNode>1</ModbusNode>
+          <InputRegister>100</InputRegister>
+          <DataFormat>IEEEFP</DataFormat>
+          <AnswerWait>150</AnswerWait>
+        </LogikaIndexArray>
+        <!-- Архив Суточный значений массы газа -->
+        <LogikaIndexArray>
+          <Dad>1</Dad>
+          <Sad>3</Sad>
+          <Channel>1</Channel>
+          <ArrayNumber>211</ArrayNumber>
+          <IndexFirst>1</IndexFirst>
+          <ItemsCount>21</ItemsCount>
+          <ModbusNode>1</ModbusNode>
+          <InputRegister>248</InputRegister>
+          <DataFormat>IEEEFP</DataFormat>
+          <AnswerWait>150</AnswerWait>
+        </LogikaIndexArray>
+        <!-- Архив Месячный значений массы газа -->
+        <LogikaIndexArray>
+          <Dad>1</Dad>
+          <Sad>3</Sad>
+          <Channel>1</Channel>
+          <ArrayNumber>212</ArrayNumber>
+          <IndexFirst>1</IndexFirst>
+          <ItemsCount>5</ItemsCount>
+          <ModbusNode>1</ModbusNode>
+          <InputRegister>290</InputRegister>
+          <DataFormat>IEEEFP</DataFormat>
+          <AnswerWait>150</AnswerWait>
+        </LogikaIndexArray>
+        <!-- Архив Часовой значений объема газа при стандартных условиях -->
+        <LogikaIndexArray>
+          <Dad>1</Dad>
+          <Sad>3</Sad>
+          <Channel>1</Channel>
+          <ArrayNumber>215</ArrayNumber>
+          <IndexFirst>1</IndexFirst>
+          <ItemsCount>24</ItemsCount>
+          <ModbusNode>1</ModbusNode>
+          <InputRegister>300</InputRegister>
+          <DataFormat>IEEEFP</DataFormat>
+          <AnswerWait>150</AnswerWait>
+        </LogikaIndexArray>
+        <!-- Архив Суточный значений объема газа при стандартных условиях -->
+        <LogikaIndexArray>
+          <Dad>1</Dad>
+          <Sad>3</Sad>
+          <Channel>1</Channel>
+          <ArrayNumber>216</ArrayNumber>
+          <IndexFirst>1</IndexFirst>
+          <ItemsCount>21</ItemsCount>
+          <ModbusNode>1</ModbusNode>
+          <InputRegister>348</InputRegister>
+          <DataFormat>IEEEFP</DataFormat>
+          <AnswerWait>150</AnswerWait>
+        </LogikaIndexArray>
+        <!-- Архив Месячный значений объема газа при стандартных условиях -->
+        <LogikaIndexArray>
+          <Dad>1</Dad>
+          <Sad>3</Sad>
+          <Channel>1</Channel>
+          <ArrayNumber>217</ArrayNumber>
+          <IndexFirst>1</IndexFirst>
+          <ItemsCount>5</ItemsCount>
+          <ModbusNode>1</ModbusNode>
+          <InputRegister>390</InputRegister>
+          <DataFormat>IEEEFP</DataFormat>
+          <AnswerWait>150</AnswerWait>
+        </LogikaIndexArray>
+        <!-- Архив Часовой значений объема газа при рабочих условиях -->
         <LogikaIndexArray>
           <Dad>1</Dad>
           <Sad>3</Sad>
           <Channel>1</Channel>
           <ArrayNumber>220</ArrayNumber>
-          <IndexFirst>0</IndexFirst>
+          <IndexFirst>1</IndexFirst>
           <ItemsCount>24</ItemsCount>
           <ModbusNode>1</ModbusNode>
-          <InputRegister>8</InputRegister>
+          <InputRegister>400</InputRegister>
+          <DataFormat>IEEEFP</DataFormat>
+          <AnswerWait>150</AnswerWait>
+        </LogikaIndexArray>
+        <!-- Архив Суточный значений объема газа при рабочих условиях -->
+        <LogikaIndexArray>
+          <Dad>1</Dad>
+          <Sad>3</Sad>
+          <Channel>1</Channel>
+          <ArrayNumber>221</ArrayNumber>
+          <IndexFirst>1</IndexFirst>
+          <ItemsCount>21</ItemsCount>
+          <ModbusNode>1</ModbusNode>
+          <InputRegister>448</InputRegister>
+          <DataFormat>IEEEFP</DataFormat>
+          <AnswerWait>150</AnswerWait>
+        </LogikaIndexArray>
+        <!-- Архив Месячный значений объема газа при рабочих условиях -->
+        <LogikaIndexArray>
+          <Dad>1</Dad>
+          <Sad>3</Sad>
+          <Channel>1</Channel>
+          <ArrayNumber>222</ArrayNumber>
+          <IndexFirst>1</IndexFirst>
+          <ItemsCount>5</ItemsCount>
+          <ModbusNode>1</ModbusNode>
+          <InputRegister>490</InputRegister>
+          <DataFormat>IEEEFP</DataFormat>
+          <AnswerWait>150</AnswerWait>
+        </LogikaIndexArray>
+        <!-- Архив Часовой значений времени интегрирования при расходе большем, чем уставка на отсечку самохода -->
+        <LogikaIndexArray>
+          <Dad>1</Dad>
+          <Sad>3</Sad>
+          <Channel>1</Channel>
+          <ArrayNumber>234</ArrayNumber>
+          <IndexFirst>1</IndexFirst>
+          <ItemsCount>24</ItemsCount>
+          <ModbusNode>1</ModbusNode>
+          <InputRegister>500</InputRegister>
+          <DataFormat>IEEEFP</DataFormat>
+          <AnswerWait>150</AnswerWait>
+        </LogikaIndexArray>
+        <!-- Архив Суточный значений времени интегрирования при расходе большем, чем уставка на отсечку самохода -->
+        <LogikaIndexArray>
+          <Dad>1</Dad>
+          <Sad>3</Sad>
+          <Channel>1</Channel>
+          <ArrayNumber>235</ArrayNumber>
+          <IndexFirst>1</IndexFirst>
+          <ItemsCount>21</ItemsCount>
+          <ModbusNode>1</ModbusNode>
+          <InputRegister>548</InputRegister>
+          <DataFormat>IEEEFP</DataFormat>
+          <AnswerWait>150</AnswerWait>
+        </LogikaIndexArray>
+        <!-- Архив Месячный значений времени интегрирования при расходе большем, чем уставка на отсечку самохода -->
+        <LogikaIndexArray>
+          <Dad>1</Dad>
+          <Sad>3</Sad>
+          <Channel>1</Channel>
+          <ArrayNumber>236</ArrayNumber>
+          <IndexFirst>1</IndexFirst>
+          <ItemsCount>5</ItemsCount>
+          <ModbusNode>1</ModbusNode>
+          <InputRegister>590</InputRegister>
           <DataFormat>IEEEFP</DataFormat>
           <AnswerWait>150</AnswerWait>
         </LogikaIndexArray>
