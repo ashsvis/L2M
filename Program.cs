@@ -21,42 +21,46 @@ namespace L2M
         {
             LocEvClient = new EventClient();
             LocEvClient.Connect(new[] { "config", "fetching", "archives" }, PropertyUpdate, ShowError, UpdateLocalConnectionStatus);
-
             var configName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "L2M.xml");
-            // чтение конфигурационного файла
-            var xdoc = XDocument.Load(configName);
-            XElement listenTcp = xdoc.Element("Config").Element("ListenTcp");
-            ReadConfigParameters(listenTcp, out IPAddress ipAddress, out int ipPort, out int sendTimeout, out int receiveTimeout);
-            // запуск потока для прослушивания запосов от устройства по протоколу Modbus Tcp
-            var listener = new BackgroundWorker { WorkerSupportsCancellation = true, WorkerReportsProgress = true };
-            listener.DoWork += ModbusListener_DoWork;
-            listener.ProgressChanged += ModbusListener_ProgressChanged;
-            var tcptuning = new TcpTuning
+            if (File.Exists(configName))
             {
-                Address = IPAddress.Any,
-                Port = ipPort,
-                SendTimeout = sendTimeout,
-                ReceiveTimeout = receiveTimeout,
-            };
-            listener.RunWorkerAsync(tcptuning);
-            // чтение параметров для опрашивающих потоков
-            foreach (XElement fetchingTcp in xdoc.Element("Config").Element("Fetching").Elements("ChannelTcp"))
-            {
-                ReadConfigParameters(fetchingTcp, out ipAddress, out ipPort, out sendTimeout, out receiveTimeout);
-                var parameters = FillParameters(fetchingTcp);
-                var fetcher = new BackgroundWorker { WorkerSupportsCancellation = true, WorkerReportsProgress = true };
-                fetcher.DoWork += LogikaFetcher_DoWork;
-                fetcher.ProgressChanged += LogikaFetcher_ProgressChanged;
-                tcptuning = new TcpTuning
+                // чтение конфигурационного файла
+                var xdoc = XDocument.Load(configName);
+                XElement listenTcp = xdoc.Element("Config").Element("ListenTcp");
+                ReadConfigParameters(listenTcp, out IPAddress ipAddress, out int ipPort, out int sendTimeout, out int receiveTimeout);
+                // запуск потока для прослушивания запосов от устройства по протоколу Modbus Tcp
+                var listener = new BackgroundWorker { WorkerSupportsCancellation = true, WorkerReportsProgress = true };
+                listener.DoWork += ModbusListener_DoWork;
+                listener.ProgressChanged += ModbusListener_ProgressChanged;
+                var tcptuning = new TcpTuning
                 {
-                    Address = ipAddress,
+                    Address = IPAddress.Any,
                     Port = ipPort,
                     SendTimeout = sendTimeout,
                     ReceiveTimeout = receiveTimeout,
-                    Parameters = parameters,
                 };
-                fetcher.RunWorkerAsync(tcptuning);
+                listener.RunWorkerAsync(tcptuning);
+                // чтение параметров для опрашивающих потоков
+                foreach (XElement fetchingTcp in xdoc.Element("Config").Element("Fetching").Elements("ChannelTcp"))
+                {
+                    ReadConfigParameters(fetchingTcp, out ipAddress, out ipPort, out sendTimeout, out receiveTimeout);
+                    var parameters = FillParameters(fetchingTcp);
+                    var fetcher = new BackgroundWorker { WorkerSupportsCancellation = true, WorkerReportsProgress = true };
+                    fetcher.DoWork += LogikaFetcher_DoWork;
+                    fetcher.ProgressChanged += LogikaFetcher_ProgressChanged;
+                    tcptuning = new TcpTuning
+                    {
+                        Address = ipAddress,
+                        Port = ipPort,
+                        SendTimeout = sendTimeout,
+                        ReceiveTimeout = receiveTimeout,
+                        Parameters = parameters,
+                    };
+                    fetcher.RunWorkerAsync(tcptuning);
+                }
             }
+            else
+                return;
             // Если запускает пользователь сам
             if (Environment.UserInteractive)
             {

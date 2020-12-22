@@ -15,11 +15,14 @@ namespace ConfigL2M
 
         private readonly Dictionary<string, ListViewGroup> groups = new Dictionary<string, ListViewGroup>();
 
+        private int lastColumn = 1;
+
         public MainForm()
         {
             InitializeComponent();
             locEvClient = new EventClient();
             lvList.SetDoubleBuffered(true);
+            lvList.ListViewItemSorter = new ListViewItemComparer(lastColumn);
         }
 
         private void MainForm_Load(object sender, System.EventArgs e)
@@ -176,14 +179,12 @@ namespace ConfigL2M
             throw new NotImplementedException();
         }
 
-        private int _lastColumn = -1;
-
         private void lvList_ColumnClick(object sender, ColumnClickEventArgs e)
         {
-            if (_lastColumn != e.Column)
+            if (lastColumn != e.Column)
             {
                 lvList.ListViewItemSorter = new ListViewItemComparer(e.Column);
-                _lastColumn = e.Column;
+                lastColumn = e.Column;
             }
             else
             {
@@ -194,6 +195,12 @@ namespace ConfigL2M
             }
             if (lvList.FocusedItem != null)
                 lvList.FocusedItem.EnsureVisible();
+        }
+
+        private void lvList_RetrieveVirtualItem(object sender, RetrieveVirtualItemEventArgs e)
+        {
+            var lvi = new ListViewItem();
+            e.Item = lvi;
         }
     }
 }
