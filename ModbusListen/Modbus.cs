@@ -34,19 +34,6 @@ namespace L2M
             return null;
         }
 
-        public static void PrintInputRegisters(int node, int top)
-        {
-            lock (locker)
-            {
-                // диапазон 4хххх - для holding регистров
-                for (var i = 30000; i < 30010; i++)
-                {
-                    Console.SetCursorPosition(0, top++);
-                    Console.Write(Swap(registers[node - 1, i]));
-                }
-            }
-        }
-
         public static object TypedValueFromRegistersArray(byte node, ushort index, Type type)
         {
             var list = new List<byte>();

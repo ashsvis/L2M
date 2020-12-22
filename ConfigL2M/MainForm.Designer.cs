@@ -28,57 +28,88 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.tvTree = new System.Windows.Forms.TreeView();
-            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
-            this.splitContainer1.Panel1.SuspendLayout();
-            this.splitContainer1.SuspendLayout();
+            this.lvList = new ConfigL2M.ListViewEx();
+            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.SuspendLayout();
             // 
-            // tvTree
+            // lvList
             // 
-            this.tvTree.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tvTree.Location = new System.Drawing.Point(0, 0);
-            this.tvTree.Name = "tvTree";
-            this.tvTree.Size = new System.Drawing.Size(311, 519);
-            this.tvTree.TabIndex = 0;
+            this.lvList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader1,
+            this.columnHeader2,
+            this.columnHeader3,
+            this.columnHeader4,
+            this.columnHeader5,
+            this.columnHeader6});
+            this.lvList.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lvList.FullRowSelect = true;
+            this.lvList.HideSelection = false;
+            this.lvList.Location = new System.Drawing.Point(0, 0);
+            this.lvList.Name = "lvList";
+            this.lvList.ShowItemToolTips = true;
+            this.lvList.Size = new System.Drawing.Size(933, 519);
+            this.lvList.TabIndex = 0;
+            this.lvList.UseCompatibleStateImageBehavior = false;
+            this.lvList.View = System.Windows.Forms.View.Details;
             // 
-            // splitContainer1
+            // columnHeader1
             // 
-            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer1.Name = "splitContainer1";
+            this.columnHeader1.Text = "Tag";
+            this.columnHeader1.Width = 0;
             // 
-            // splitContainer1.Panel1
+            // columnHeader2
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.tvTree);
-            this.splitContainer1.Size = new System.Drawing.Size(933, 519);
-            this.splitContainer1.SplitterDistance = 311;
-            this.splitContainer1.TabIndex = 1;
+            this.columnHeader2.Text = "Address";
+            this.columnHeader2.Width = 80;
+            // 
+            // columnHeader3
+            // 
+            this.columnHeader3.Text = "Value";
+            this.columnHeader3.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.columnHeader3.Width = 80;
+            // 
+            // columnHeader4
+            // 
+            this.columnHeader4.Text = "Unit";
+            // 
+            // columnHeader5
+            // 
+            this.columnHeader5.Text = "Time";
+            this.columnHeader5.Width = 120;
+            // 
+            // columnHeader6
+            // 
+            this.columnHeader6.Text = "Source";
+            this.columnHeader6.Width = 120;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(933, 519);
-            this.Controls.Add(this.splitContainer1);
-            this.DoubleBuffered = true;
+            this.Controls.Add(this.lvList);
             this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Logika to Modbus configurator";
             this.Load += new System.EventHandler(this.MainForm_Load);
-            this.splitContainer1.Panel1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
-            this.splitContainer1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
 
         #endregion
-
-        private System.Windows.Forms.TreeView tvTree;
-        private System.Windows.Forms.SplitContainer splitContainer1;
+        private ListViewEx lvList;
+        private System.Windows.Forms.ColumnHeader columnHeader1;
+        private System.Windows.Forms.ColumnHeader columnHeader2;
+        private System.Windows.Forms.ColumnHeader columnHeader3;
+        private System.Windows.Forms.ColumnHeader columnHeader4;
+        private System.Windows.Forms.ColumnHeader columnHeader5;
+        private System.Windows.Forms.ColumnHeader columnHeader6;
     }
 }
 

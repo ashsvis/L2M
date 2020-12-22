@@ -86,16 +86,6 @@
           <DataFormat>IEEEFP</DataFormat>
           <AnswerWait>150</AnswerWait>
         </LogikaItem>
-        <LogikaItem>
-          <Dad>1</Dad>
-          <Sad>3</Sad>
-          <Channel>0</Channel>
-          <Parameter>12</Parameter>
-          <ModbusNode>1</ModbusNode>
-          <HoldingRegister>6</HoldingRegister>
-          <DataFormat>IEEEFP</DataFormat>
-          <AnswerWait>150</AnswerWait>
-        </LogikaItem>
         <LogikaIndexArray>
           <Dad>1</Dad>
           <Sad>3</Sad>
@@ -104,7 +94,7 @@
           <IndexFirst>0</IndexFirst>
           <ItemsCount>24</ItemsCount>
           <ModbusNode>1</ModbusNode>
-          <HoldingRegister>8</HoldingRegister>
+          <InputRegister>8</InputRegister>
           <DataFormat>IEEEFP</DataFormat>
           <AnswerWait>150</AnswerWait>
         </LogikaIndexArray>

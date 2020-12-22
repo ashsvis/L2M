@@ -390,7 +390,6 @@ namespace L2M
                             var paramsToWriteExists = Modbus.ParamsToWriteExists();
                             FetchItems(parameters, socket, paramsToWriteExists, true);
                         }
-                        //Console.WriteLine("Опрос архива.");
                     }
                 }
                 catch (Exception ex)

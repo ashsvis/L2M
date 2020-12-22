@@ -12,10 +12,14 @@ namespace ConfigL2M
         private readonly Dictionary<string, string> config = new Dictionary<string, string>();
         private readonly Dictionary<string, string> fetching = new Dictionary<string, string>();
 
+        private readonly Dictionary<string, ListViewGroup> groups = new Dictionary<string, ListViewGroup>();
+
         public MainForm()
         {
             InitializeComponent();
             locEvClient = new EventClient();
+            //lvList.Groups.Add("Holdings", "Holdings");
+            //lvList.Groups.Add("Inputs", "Inputs");
         }
 
         private void MainForm_Load(object sender, System.EventArgs e)
@@ -76,56 +80,47 @@ namespace ConfigL2M
                         else
                             fetching[key] = value?.TrimEnd();
 
-                        //Text = $"{category}:{key}={value}";
-
                         var keys = key.Split(':');
                         var node = keys[0];
                         var table = keys[1];
                         var index = keys[2];
-                        TreeNode selected;
 
-                        tvTree.BeginUpdate();
-                        tvTree.SuspendLayout();
-                        try
+                        #region Добавление групп просмотра
+
+                        var groupKey = $"Modbus node: {node}, {table}";
+
+                        if (!groups.ContainsKey(groupKey))
+                            groups.Add(groupKey, new ListViewGroup(groupKey));
+
+                        var group = groups[groupKey];
+
+                        if (!lvList.Groups.Contains(group))
+                            lvList.Groups.Add(group);
+
+                        #endregion
+
+                        ListViewItem lvi = lvList.FindItemWithText(key);
+                        var vals = (value ?? string.Empty).Split('\t');
+                        if (lvi == null)
                         {
-                            var nodes = tvTree.Nodes.Find(node, false);
-                            if (nodes.Length == 0)
-                            {
-                                var nd = new TreeNode(node) { Name = node };
-                                tvTree.Nodes.Add(nd);
-                                selected = nd;
-                            }
-                            else
-                                selected = nodes[0];
+                            lvi = new ListViewItem(key);
+                            lvi.SubItems.Add(ModifyToModbusRegisterAddress(ushort.Parse(index), table).ToString());
+                            lvi.SubItems.Add(vals[0]);
+                            lvi.SubItems.Add(vals.Length > 1 ? vals[1] : "");
+                            lvi.SubItems.Add(vals.Length > 2 ? vals[2] : "");
+                            lvi.SubItems.Add(propname);
 
-                            nodes = selected.Nodes.Find(table, false);
-                            if (nodes.Length == 0)
-                            {
-                                var nd = new TreeNode(table) { Name = table };
-                                selected.Nodes.Add(nd);
-                                selected = nd;
-                            }
-                            else
-                                selected = nodes[0];
+                            lvi.Group = group;
 
-                            nodes = selected.Nodes.Find(index, false);
-                            if (nodes.Length == 0)
-                            {
-                                var nd = new TreeNode($"{index} {value?.TrimEnd()}") { Name = index };
-                                selected.Nodes.Add(nd);
-                                selected = nd;
-                            }
-                            else
-                            {
-                                selected = nodes[0];
-                                selected.Text = $"{index} {value?.TrimEnd()}";
-                            }
+                            lvList.Items.Add(lvi);
                         }
-                        finally
+                        else
                         {
-                            tvTree.ResumeLayout();
-                            tvTree.EndUpdate();
+                            lvi.SubItems[2].Text = vals[0];
+                            lvi.SubItems[3].Text = vals.Length > 1 ? vals[1] : "";
+                            lvi.SubItems[4].Text = vals.Length > 2 ? vals[2] : "";
                         }
+
                     });
                     if (InvokeRequired)
                         BeginInvoke(method1);
@@ -135,7 +130,7 @@ namespace ConfigL2M
                 case "archives":
                     var method2 = new MethodInvoker(() =>
                     {
-                        //listBox2.Items.Insert(0, $"{pointname} {propname} {value}");
+
                     });
                     if (InvokeRequired)
                         BeginInvoke(method2);
@@ -148,34 +143,7 @@ namespace ConfigL2M
                         switch (pointname.ToLower())
                         {
                             case "add":
-                                //var treeNodes = propname.StartsWith("root") ? tvSources : tvNodes;
-                                //var tree = treeNodes.Nodes;
-                                //var nodes = tree.Find(propname, true);
-                                //if (nodes.Length == 0)
-                                //{
-                                //    treeNodes.BeginUpdate();
-                                //    try
-                                //    {
-                                //        foreach (var item in propname.Split('\\'))
-                                //        {
-                                //            nodes = tree.Find(item, false);
-                                //            if (nodes.Length == 0)
-                                //            {
-                                //                var node = new TreeNode(item) { Name = item };
-                                //                tree.Add(node);
-                                //                tree = node.Nodes;
-                                //            }
-                                //            else
-                                //                tree = nodes[0].Nodes;
-                                //        }
-                                //        treeNodes.Sort();
-                                //    }
-                                //    finally
-                                //    {
-                                //        treeNodes.EndUpdate();
-                                //    }
-                                //}
-                                break;
+                                 break;
                         }
                         // для работы списка свойств
                         var key = $"{pointname}\\{propname}";
@@ -190,6 +158,22 @@ namespace ConfigL2M
                         method3();
                     break;
             }
+        }
+
+        public static ushort ModifyToModbusRegisterAddress(ushort startAddr, string table)
+        {
+            switch (table)
+            {
+                case "Coils":
+                    return Convert.ToUInt16(1 + startAddr);       // coils
+                case "Contacts":
+                    return Convert.ToUInt16(10001 + startAddr);   // contacts
+                case "Holdings":
+                    return Convert.ToUInt16(40001 + startAddr);   // holdings
+                case "Inputs":
+                    return Convert.ToUInt16(30001 + startAddr);   // inputs
+            }
+            throw new NotImplementedException();
         }
 
     }
