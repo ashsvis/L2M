@@ -25,7 +25,7 @@
             <ModbusNode>1</ModbusNode>
             <InputRegister>0</InputRegister>
             <DataFormat>IEEEFP</DataFormat>
-            <AnswerWait>150</AnswerWait>
+            <AnswerWait>160</AnswerWait>
           </LogikaItem>
           <!-- Температура газа -->
           <LogikaItem>
@@ -35,7 +35,7 @@
             <ModbusNode>1</ModbusNode>
             <InputRegister>2</InputRegister>
             <DataFormat>IEEEFP</DataFormat>
-            <AnswerWait>150</AnswerWait>
+            <AnswerWait>160</AnswerWait>
           </LogikaItem>
           <!-- Объем газа при стандартных условиях нарастающим итогом -->
           <LogikaItem>
@@ -45,7 +45,7 @@
             <ModbusNode>1</ModbusNode>
             <InputRegister>4</InputRegister>
             <DataFormat>IEEEFP</DataFormat>
-            <AnswerWait>150</AnswerWait>
+            <AnswerWait>160</AnswerWait>
           </LogikaItem>
           <!-- Объем газа при рабочих условиях нарастающим итогом -->
           <LogikaItem>
@@ -55,7 +55,7 @@
             <ModbusNode>1</ModbusNode>
             <InputRegister>6</InputRegister>
             <DataFormat>IEEEFP</DataFormat>
-            <AnswerWait>150</AnswerWait>
+            <AnswerWait>160</AnswerWait>
           </LogikaItem>
           <!-- Абсолютное давление (для вычислений) -->
           <LogikaItem>
@@ -65,7 +65,7 @@
             <ModbusNode>1</ModbusNode>
             <InputRegister>8</InputRegister>
             <DataFormat>IEEEFP</DataFormat>
-            <AnswerWait>150</AnswerWait>
+            <AnswerWait>160</AnswerWait>
           </LogikaItem>
           <!-- Текущая дата прибора -->
           <LogikaItem>
@@ -75,7 +75,7 @@
             <ModbusNode>1</ModbusNode>
             <InputRegister>10</InputRegister>
             <DataFormat>IEEEFP</DataFormat>
-            <AnswerWait>150</AnswerWait>
+            <AnswerWait>160</AnswerWait>
           </LogikaItem>
           <!-- Текущее время прибора -->
           <LogikaItem>
@@ -85,7 +85,7 @@
             <ModbusNode>1</ModbusNode>
             <InputRegister>12</InputRegister>
             <DataFormat>IEEEFP</DataFormat>
-            <AnswerWait>150</AnswerWait>
+            <AnswerWait>160</AnswerWait>
           </LogikaItem>
           <!-- Номер прибора -->
           <LogikaItem>
@@ -95,7 +95,7 @@
             <ModbusNode>1</ModbusNode>
             <InputRegister>14</InputRegister>
             <DataFormat>IEEEFP</DataFormat>
-            <AnswerWait>150</AnswerWait>
+            <AnswerWait>160</AnswerWait>
           </LogikaItem>
           <!-- Расчетный час для формирования архивов за сутки -->
           <LogikaItem>
@@ -105,7 +105,7 @@
             <ModbusNode>1</ModbusNode>
             <InputRegister>16</InputRegister>
             <DataFormat>IEEEFP</DataFormat>
-            <AnswerWait>150</AnswerWait>
+            <AnswerWait>160</AnswerWait>
           </LogikaItem>
           <!-- Расчетный день для формирования архивов за месяц -->
           <LogikaItem>
@@ -115,7 +115,7 @@
             <ModbusNode>1</ModbusNode>
             <InputRegister>18</InputRegister>
             <DataFormat>IEEEFP</DataFormat>
-            <AnswerWait>150</AnswerWait>
+            <AnswerWait>160</AnswerWait>
           </LogikaItem>
           <!-- Объемное содержание азота, % -->
           <LogikaItem>
@@ -126,7 +126,7 @@
             <ModbusNode>1</ModbusNode>
             <HoldingRegister>0</HoldingRegister>
             <DataFormat>IEEEFP</DataFormat>
-            <AnswerWait>150</AnswerWait>
+            <AnswerWait>160</AnswerWait>
           </LogikaItem>
           <!-- Объемное содержание диоксида углерода, % -->
           <LogikaItem>
@@ -137,7 +137,7 @@
             <ModbusNode>1</ModbusNode>
             <HoldingRegister>2</HoldingRegister>
             <DataFormat>IEEEFP</DataFormat>
-            <AnswerWait>150</AnswerWait>
+            <AnswerWait>160</AnswerWait>
           </LogikaItem>
           <!-- Плотность сухого газа при стандартных условиях, кг/м3 -->
           <LogikaItem>
@@ -148,7 +148,7 @@
             <ModbusNode>1</ModbusNode>
             <HoldingRegister>4</HoldingRegister>
             <DataFormat>IEEEFP</DataFormat>
-            <AnswerWait>150</AnswerWait>
+            <AnswerWait>160</AnswerWait>
           </LogikaItem>
           <!-- Архив Часовой средних значений температуры газа -->
           <LogikaIndexArray>
@@ -160,7 +160,7 @@
             <ModbusNode>1</ModbusNode>
             <InputRegister>100</InputRegister>
             <DataFormat>IEEEFP</DataFormat>
-            <AnswerWait>150</AnswerWait>
+            <AnswerWait>160</AnswerWait>
           </LogikaIndexArray>
           <!-- Архив Суточный средних значений температуры газа -->
           <LogikaIndexArray>
@@ -172,7 +172,7 @@
             <ModbusNode>1</ModbusNode>
             <InputRegister>148</InputRegister>
             <DataFormat>IEEEFP</DataFormat>
-            <AnswerWait>150</AnswerWait>
+            <AnswerWait>160</AnswerWait>
           </LogikaIndexArray>
           <!-- Архив Месячный средних значений температуры газа -->
           <LogikaIndexArray>
@@ -184,7 +184,7 @@
             <ModbusNode>1</ModbusNode>
             <InputRegister>190</InputRegister>
             <DataFormat>IEEEFP</DataFormat>
-            <AnswerWait>150</AnswerWait>
+            <AnswerWait>160</AnswerWait>
           </LogikaIndexArray>
           <!-- Архив Часовой значений массы газа -->
           <LogikaIndexArray>
@@ -196,7 +196,7 @@
             <ModbusNode>1</ModbusNode>
             <InputRegister>200</InputRegister>
             <DataFormat>IEEEFP</DataFormat>
-            <AnswerWait>150</AnswerWait>
+            <AnswerWait>160</AnswerWait>
           </LogikaIndexArray>
           <!-- Архив Суточный значений массы газа -->
           <LogikaIndexArray>
@@ -208,7 +208,7 @@
             <ModbusNode>1</ModbusNode>
             <InputRegister>248</InputRegister>
             <DataFormat>IEEEFP</DataFormat>
-            <AnswerWait>150</AnswerWait>
+            <AnswerWait>160</AnswerWait>
           </LogikaIndexArray>
           <!-- Архив Месячный значений массы газа -->
           <LogikaIndexArray>
@@ -220,7 +220,7 @@
             <ModbusNode>1</ModbusNode>
             <InputRegister>290</InputRegister>
             <DataFormat>IEEEFP</DataFormat>
-            <AnswerWait>150</AnswerWait>
+            <AnswerWait>160</AnswerWait>
           </LogikaIndexArray>
           <!-- Архив Часовой значений объема газа при стандартных условиях -->
           <LogikaIndexArray>
@@ -232,7 +232,7 @@
             <ModbusNode>1</ModbusNode>
             <InputRegister>300</InputRegister>
             <DataFormat>IEEEFP</DataFormat>
-            <AnswerWait>150</AnswerWait>
+            <AnswerWait>160</AnswerWait>
           </LogikaIndexArray>
           <!-- Архив Суточный значений объема газа при стандартных условиях -->
           <LogikaIndexArray>
@@ -244,7 +244,7 @@
             <ModbusNode>1</ModbusNode>
             <InputRegister>348</InputRegister>
             <DataFormat>IEEEFP</DataFormat>
-            <AnswerWait>150</AnswerWait>
+            <AnswerWait>160</AnswerWait>
           </LogikaIndexArray>
           <!-- Архив Месячный значений объема газа при стандартных условиях -->
           <LogikaIndexArray>
@@ -256,7 +256,7 @@
             <ModbusNode>1</ModbusNode>
             <InputRegister>390</InputRegister>
             <DataFormat>IEEEFP</DataFormat>
-            <AnswerWait>150</AnswerWait>
+            <AnswerWait>160</AnswerWait>
           </LogikaIndexArray>
           <!-- Архив Часовой значений объема газа при рабочих условиях -->
           <LogikaIndexArray>
@@ -268,7 +268,7 @@
             <ModbusNode>1</ModbusNode>
             <InputRegister>400</InputRegister>
             <DataFormat>IEEEFP</DataFormat>
-            <AnswerWait>150</AnswerWait>
+            <AnswerWait>160</AnswerWait>
           </LogikaIndexArray>
           <!-- Архив Суточный значений объема газа при рабочих условиях -->
           <LogikaIndexArray>
@@ -280,7 +280,7 @@
             <ModbusNode>1</ModbusNode>
             <InputRegister>448</InputRegister>
             <DataFormat>IEEEFP</DataFormat>
-            <AnswerWait>150</AnswerWait>
+            <AnswerWait>160</AnswerWait>
           </LogikaIndexArray>
           <!-- Архив Месячный значений объема газа при рабочих условиях -->
           <LogikaIndexArray>
@@ -292,7 +292,7 @@
             <ModbusNode>1</ModbusNode>
             <InputRegister>490</InputRegister>
             <DataFormat>IEEEFP</DataFormat>
-            <AnswerWait>150</AnswerWait>
+            <AnswerWait>160</AnswerWait>
           </LogikaIndexArray>
           <!-- Архив Часовой значений времени интегрирования при расходе большем, чем уставка на отсечку самохода -->
           <LogikaIndexArray>
@@ -304,7 +304,7 @@
             <ModbusNode>1</ModbusNode>
             <InputRegister>500</InputRegister>
             <DataFormat>IEEEFP</DataFormat>
-            <AnswerWait>150</AnswerWait>
+            <AnswerWait>160</AnswerWait>
           </LogikaIndexArray>
           <!-- Архив Суточный значений времени интегрирования при расходе большем, чем уставка на отсечку самохода -->
           <LogikaIndexArray>
@@ -316,7 +316,7 @@
             <ModbusNode>1</ModbusNode>
             <InputRegister>548</InputRegister>
             <DataFormat>IEEEFP</DataFormat>
-            <AnswerWait>150</AnswerWait>
+            <AnswerWait>160</AnswerWait>
           </LogikaIndexArray>
           <!-- Архив Месячный значений времени интегрирования при расходе большем, чем уставка на отсечку самохода -->
           <LogikaIndexArray>
@@ -328,7 +328,7 @@
             <ModbusNode>1</ModbusNode>
             <InputRegister>590</InputRegister>
             <DataFormat>IEEEFP</DataFormat>
-            <AnswerWait>150</AnswerWait>
+            <AnswerWait>160</AnswerWait>
           </LogikaIndexArray>
         </LogikaNode>
       </Runtime>

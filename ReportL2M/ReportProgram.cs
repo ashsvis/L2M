@@ -47,26 +47,77 @@ $@"<tr>
             style = "style=\"text-align:right;\"";
             var rows = new List<string>();
 
-            for (var i = 0; i < 10; i++)
+            foreach (var to in toh)
             {
                 var row = $@"<tr>
-<td {style}>21.12.2020 00:00</td>
-<td {style}>1</td>
-<td {style}>3.3945</td>
-<td {style}>6524.87</td>
-<td {style}>9227.65</td>
-<td {style}>1490.21</td>
+<td {style}>{to.Key:dd.MM.yyyy HH:mm}</td>
+<td {style}>{to.Value:0.00}</td>
+<td {style}>{Th[to.Key]:0.00}</td>
+<td {style}>{Mh[to.Key]:0.00}</td>
+<td {style}>{Vh[to.Key]:0.00}</td>
+<td {style}>{Voh[to.Key]:0.00}</td>
 </tr>";
                 rows.Add(row);
             }
 
             tmp = tmp.Replace("##RowsHourTable##", string.Join("\r\n", rows));
+//--------------------
+            tmp = tmp.Replace("##HeaderDayTable##",
+$@"<tr>
+<td {style}>Tod1_t1, ч</td>
+<td {style}>Td1_t1, °C</td>
+<td {style}>Md1_t1, кг</td>
+<td {style}>Vd1_t1, м3</td>
+<td {style}>Vod1_t1, м3</td>
+</tr>");
+            style = "style=\"text-align:right;\"";
+            rows = new List<string>();
 
+            foreach (var to in tod)
+            {
+                var row = $@"<tr>
+<td {style}>{to.Key:dd.MM.yyyy HH:mm}</td>
+<td {style}>{to.Value:0.00}</td>
+<td {style}>{Td[to.Key]:0.00}</td>
+<td {style}>{Md[to.Key]:0.00}</td>
+<td {style}>{Vd[to.Key]:0.00}</td>
+<td {style}>{Vod[to.Key]:0.00}</td>
+</tr>";
+                rows.Add(row);
+            }
+
+            tmp = tmp.Replace("##RowsDayTable##", string.Join("\r\n", rows));
+//--------------------
+            tmp = tmp.Replace("##HeaderMonthTable##",
+$@"<tr>
+<td {style}>Tom1_t1, ч</td>
+<td {style}>Tm1_t1, °C</td>
+<td {style}>Mm1_t1, кг</td>
+<td {style}>Vm1_t1, м3</td>
+<td {style}>Vom1_t1, м3</td>
+</tr>");
+            style = "style=\"text-align:right;\"";
+            rows = new List<string>();
+
+            foreach (var to in tom)
+            {
+                var row = $@"<tr>
+<td {style}>{to.Key:dd.MM.yyyy HH:mm}</td>
+<td {style}>{to.Value:0.00}</td>
+<td {style}>{Tm[to.Key]:0.00}</td>
+<td {style}>{Mm[to.Key]:0.00}</td>
+<td {style}>{Vm[to.Key]:0.00}</td>
+<td {style}>{Vom[to.Key]:0.00}</td>
+</tr>";
+                rows.Add(row);
+            }
+
+            tmp = tmp.Replace("##RowsMonthTable##", string.Join("\r\n", rows));
 
             File.WriteAllText("report.htm", tmp, Encoding.Default);
 
-            Console.WriteLine("Press any key...");
-            Console.ReadKey();
+            //Console.WriteLine("Press any key...");
+            //Console.ReadKey();
         }
 
         private static IDictionary<DateTime, float> FetchRegiser(byte node, byte func, ushort addr, int count, Period period)
