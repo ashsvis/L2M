@@ -56,7 +56,7 @@
     <Compile Include="ModbusListen\Modbus.cs" />
     <Compile Include="ModbusListen\ModbusTable.cs" />
     <Compile Include="ModbusListen\ParamAddr.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="ProgramService.cs" />
     <Compile Include="ProjectInstaller.cs">
       <SubType>Component</SubType>
     </Compile>

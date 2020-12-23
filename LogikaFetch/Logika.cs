@@ -74,7 +74,7 @@ namespace L2M
                     {
                         CheckAndStoreData(request, result);
 
-                        Program.LocEvClient.UpdateProperty("fetching", request.AsAddress,
+                        ProgramService.LocEvClient.UpdateProperty("fetching", request.AsAddress,
                             request.AsArrayIndex, $"{result.Value}\t{result.Unit}\t{result.Time}");
                     }
                 }
@@ -322,7 +322,7 @@ namespace L2M
                     {
                         CheckAndStoreData(request, result);
 
-                        Program.LocEvClient.UpdateProperty("fetching", request.AsAddress, 
+                        ProgramService.LocEvClient.UpdateProperty("fetching", request.AsAddress, 
                             request.AsParameter, $"{result.Value}\t{result.Unit}\t{result.Time}");
                     }
                 }
