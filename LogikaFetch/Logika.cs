@@ -49,11 +49,11 @@ namespace L2M
                         result.Channel == request.Channel && result.Parameter == request.Parameter)
                     {
                         if (!string.IsNullOrWhiteSpace(result.Value))
-                            throw new Exception($"Logika {request.Dad}.{request.Channel}.{request.Parameter}.{request.ArrayIndexNumber} {result.Value}");
+                            throw new Exception($"Logika {request.AsArrayIndex} {result.Value}");
                     }
                 }
                 else
-                    throw new Exception($"Logika {request.Dad}.{request.Channel}.{request.Parameter}.{request.ArrayIndexNumber} checksumm error");
+                    throw new Exception($"Logika {request.AsArrayIndex} checksumm error");
             }
         }
 
@@ -72,14 +72,14 @@ namespace L2M
                     if (result.Dad == request.Dad && result.Sad == request.Sad && result.Fnc == 0x14 &&
                         result.Channel == request.Channel && result.Parameter == request.Parameter)
                     {
-                        CheckAndStoreData(request.NodeAddr, request.ModbusTable, request.StartAddr, request.FormatData, result);
+                        CheckAndStoreData(request, result);
 
-                        Program.LocEvClient.UpdateProperty("fetching", $"{request.NodeAddr}:{request.ModbusTable}:{request.StartAddr}",
-                            $"Logika {request.Dad}.{request.Channel:00}.{request.Parameter:000}[{request.ArrayIndexNumber:00}]", $"{result.Value}\t{result.Unit}\t{result.Time}");
+                        Program.LocEvClient.UpdateProperty("fetching", request.AsAddress,
+                            request.AsArrayIndex, $"{result.Value}\t{result.Unit}\t{result.Time}");
                     }
                 }
                 else
-                    throw new Exception($"Logika {request.Dad}.{request.Channel:00}.{request.Parameter:000}[{request.ArrayIndexNumber:00}] checksumm error");
+                    throw new Exception($"{request.AsArrayIndex} checksumm error");
             }
         }
 
@@ -320,48 +320,48 @@ namespace L2M
                     if (result.Dad == request.Sad && result.Sad == request.Dad && result.Fnc == 3 &&
                         result.Channel == request.Channel && result.Parameter == request.Parameter)
                     {
-                        CheckAndStoreData(request.NodeAddr, request.ModbusTable, request.StartAddr, request.FormatData, result);
+                        CheckAndStoreData(request, result);
 
-                        Program.LocEvClient.UpdateProperty("fetching", $"{request.NodeAddr}:{request.ModbusTable}:{request.StartAddr}", 
-                            $"Logika {request.Dad}.{request.Channel:00}.{request.Parameter:000}", $"{result.Value}\t{result.Unit}\t{result.Time}");
+                        Program.LocEvClient.UpdateProperty("fetching", request.AsAddress, 
+                            request.AsParameter, $"{result.Value}\t{result.Unit}\t{result.Time}");
                     }
                 }
                 else
-                    throw new Exception($"Logika {request.Dad}.{request.Channel:00}.{request.Parameter:000} checksumm error");
+                    throw new Exception($"{request.AsParameter} checksumm error");
             }
         }
 
-        private static void CheckAndStoreData(byte nodeAddr, ModbusTable modbusTable, ushort startAddr, string dataFormat, AnswerData result)
+        private static void CheckAndStoreData(RequestData request, AnswerData result)
         {
-            if (dataFormat == "IEEEFP" &&
+            if (request.FormatData == "IEEEFP" &&
                 float.TryParse(result.Value, NumberStyles.Float, CultureInfo.GetCultureInfo("en-US"), out float floatValue))
             {
-                ushort addr = startAddr;
+                ushort addr = request.StartAddr;
                 var n = 0;
                 var bytes = BitConverter.GetBytes(floatValue);
                 Array.Reverse(bytes);
                 for (ushort i = 0; i < 2; i++)
                 {
-                    var regAddr = Modbus.ModifyToModbusRegisterAddress(addr, modbusTable);
+                    var regAddr = Modbus.ModifyToModbusRegisterAddress(addr, request.ModbusTable);
                     ushort value = BitConverter.ToUInt16(bytes, n);
-                    Modbus.SetRegisterValue(nodeAddr, regAddr, value);
+                    Modbus.SetRegisterValue(request.NodeAddr, regAddr, value);
                     n = n + 2;  // коррекция позиции смещения в принятых данных для записи
                     addr += 1;
                 }
             }
             else
-            if (dataFormat == "S32B" &&
+            if (request.FormatData == "S32B" &&
                 int.TryParse(result.Value, NumberStyles.Integer, CultureInfo.GetCultureInfo("en-US"), out int intValue))
             {
-                ushort addr = startAddr;
+                ushort addr = request.StartAddr;
                 var n = 0;
                 var bytes = BitConverter.GetBytes(intValue);
                 //Array.Reverse(bytes);  <--- не делать реверс для uint
                 for (ushort i = 0; i < 2; i++)
                 {
-                    var regAddr = Modbus.ModifyToModbusRegisterAddress(addr, modbusTable);
+                    var regAddr = Modbus.ModifyToModbusRegisterAddress(addr, request.ModbusTable);
                     ushort value = BitConverter.ToUInt16(bytes, n);
-                    Modbus.SetRegisterValue(nodeAddr, regAddr, Modbus.Swap(value)); // <--- Swap() для uint
+                    Modbus.SetRegisterValue(request.NodeAddr, regAddr, Modbus.Swap(value)); // <--- Swap() для uint
                     n = n + 2;  // коррекция позиции смещения в принятых данных для записи
                     addr += 1;
                 }

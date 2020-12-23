@@ -14,5 +14,9 @@
         public ushort StartAddr { get; set; }
         public string FormatData { get; set; }
         public int AnswerWait { get; set; }
+
+        public string AsParameter { get => $"Logika {Dad}.{Channel:00}.{Parameter:000}"; }
+        public string AsArrayIndex { get => $"Logika {Dad}.{Channel:00}.{Parameter:000}[{ArrayIndexNumber:00}]"; }
+        public string AsAddress { get => $"{NodeAddr}:{ModbusTable}:{StartAddr}"; }
     }
 }
