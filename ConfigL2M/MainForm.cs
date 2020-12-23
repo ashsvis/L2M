@@ -121,7 +121,7 @@ namespace ConfigL2M
                         if (lvi == null)
                         {
                             lvi = new ListViewItem(key);
-                            lvi.SubItems.Add($"{ModifyToModbusRegisterAddress(ushort.Parse(index), table)} ({key})");
+                            lvi.SubItems.Add($"{ModifyToModbusRegisterAddress(ushort.Parse(index), table)}");
                             lvi.SubItems.Add(vals[0]);
                             lvi.SubItems.Add(vals.Length > 1 ? vals[1] : "");
                             lvi.SubItems.Add(vals.Length > 2 ? vals[2] : "");

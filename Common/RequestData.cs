@@ -2,6 +2,8 @@
 {
     public class RequestData
     {
+        public string Node { get; set; } = "Logika";
+        public string Tag { get; set; }
         public byte Dad { get; set; }
         public byte Sad { get; set; }
         public int Channel { get; set; }
@@ -15,8 +17,8 @@
         public string FormatData { get; set; }
         public int AnswerWait { get; set; }
 
-        public string AsParameter { get => $"Logika {Dad}.{Channel:00}.{Parameter:000}"; }
-        public string AsArrayIndex { get => $"Logika {Dad}.{Channel:00}.{Parameter:000}[{ArrayIndexNumber:00}]"; }
+        public string AsParameter { get => $"{Node}.{Tag} {Dad}.{Channel:00}.{Parameter:000}"; }
+        public string AsArrayIndex { get => $"{Node}.{Tag} {Dad}.{Channel:00}.{Parameter:000}[{ArrayIndexNumber:00}]"; }
         public string AsAddress { get => $"{NodeAddr}:{ModbusTable}:{StartAddr}"; }
     }
 }
