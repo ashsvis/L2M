@@ -20,7 +20,7 @@ namespace L2M
         static void Main(string[] args)
         {
             LocEvClient = new EventClient();
-            LocEvClient.Connect(new[] { "config", "fetching", "archives" }, PropertyUpdate, ShowError, UpdateLocalConnectionStatus);
+            LocEvClient.Connect(new[] { "fetching", "errors" }, PropertyUpdate, ShowError, UpdateLocalConnectionStatus);
             var configName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "L2M.xml");
             if (File.Exists(configName))
             {
@@ -102,9 +102,7 @@ namespace L2M
             {
                 case "fetching":
                     break;
-                case "archives":
-                    break;
-                case "config":
+                case "errors":
                     break;
             }
         }

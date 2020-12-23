@@ -25,11 +25,13 @@ namespace L2M
                         result.Channel == request.Channel && result.Parameter == request.Parameter)
                     {
                         if (!string.IsNullOrWhiteSpace(result.Value))
-                            throw new Exception($"Logika {request.Dad}.{request.Channel}.{request.Parameter} {result.Value}");
+                            ProgramService.LocEvClient.UpdateProperty("errors", request.AsAddress,
+                                                        request.AsParameter, $"при записи вернул: {result.Value}");
                     }
                 }
                 else
-                    throw new Exception($"Logika {request.Dad}.{request.Channel}.{request.Parameter} checksumm error");
+                    ProgramService.LocEvClient.UpdateProperty("errors", request.AsAddress,
+                                                request.AsParameter, "ошибка к.с.?");
             }
         }
 
@@ -49,11 +51,13 @@ namespace L2M
                         result.Channel == request.Channel && result.Parameter == request.Parameter)
                     {
                         if (!string.IsNullOrWhiteSpace(result.Value))
-                            throw new Exception($"Logika {request.AsArrayIndex} {result.Value}");
+                            ProgramService.LocEvClient.UpdateProperty("errors", request.AsAddress,
+                                                        request.AsArrayIndex, $"при записи вернул: {result.Value}");
                     }
                 }
                 else
-                    throw new Exception($"Logika {request.AsArrayIndex} checksumm error");
+                    ProgramService.LocEvClient.UpdateProperty("errors", request.AsAddress,
+                                                request.AsArrayIndex, "ошибка к.с.?");
             }
         }
 
@@ -73,13 +77,13 @@ namespace L2M
                         result.Channel == request.Channel && result.Parameter == request.Parameter)
                     {
                         CheckAndStoreData(request, result);
-
                         ProgramService.LocEvClient.UpdateProperty("fetching", request.AsAddress,
                             request.AsArrayIndex, $"{result.Value}\t{result.Unit}\t{result.Time}");
                     }
                 }
                 else
-                    throw new Exception($"{request.AsArrayIndex} checksumm error");
+                    ProgramService.LocEvClient.UpdateProperty("errors", request.AsAddress,
+                                                request.AsArrayIndex, "ошибка к.с.?");
             }
         }
 
@@ -321,13 +325,13 @@ namespace L2M
                         result.Channel == request.Channel && result.Parameter == request.Parameter)
                     {
                         CheckAndStoreData(request, result);
-
                         ProgramService.LocEvClient.UpdateProperty("fetching", request.AsAddress, 
                             request.AsParameter, $"{result.Value}\t{result.Unit}\t{result.Time}");
                     }
                 }
                 else
-                    throw new Exception($"{request.AsParameter} checksumm error");
+                    ProgramService.LocEvClient.UpdateProperty("errors", request.AsAddress,
+                        request.AsParameter, "ошибка к.с.?");
             }
         }
 

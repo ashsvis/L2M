@@ -12,9 +12,6 @@ namespace ConfigL2M
     {
         private readonly EventClient locEvClient;
 
-        //private readonly Dictionary<string, string> config = new Dictionary<string, string>();
-        //private readonly Dictionary<string, string> fetching = new Dictionary<string, string>();
-
         private readonly Dictionary<string, ListViewGroup> groups = new Dictionary<string, ListViewGroup>();
 
         private int lastColumn = 1;
@@ -29,7 +26,7 @@ namespace ConfigL2M
 
         private void MainForm_Load(object sender, System.EventArgs e)
         {
-            locEvClient.Connect(new[] { "config", "fetching", "archives" }, PropertyUpdate, ShowError, UpdateLocalConnectionStatus);
+            locEvClient.Connect(new[] { "fetching", "errors" }, PropertyUpdate, ShowError, UpdateLocalConnectionStatus);
             var fileName = "L2M.xml";
             if (File.Exists(fileName))
                 LoadConfig(fileName);
@@ -88,14 +85,11 @@ namespace ConfigL2M
             switch (category.ToLower())
             {
                 case "fetching":
+                case "errors":
                     var method1 = new MethodInvoker(() =>
                     {
                         // для работы списка свойств
                         var key = $"{pointname}:{propname}";
-                        //if (!fetching.ContainsKey(key))
-                        //    fetching.Add(key, value?.TrimEnd());
-                        //else
-                        //    fetching[key] = value?.TrimEnd();
 
                         var keys = key.Split(':');
                         var node = keys[0];
@@ -144,36 +138,16 @@ namespace ConfigL2M
                     else
                         method1();
                     break;
-                case "archives":
-                    var method2 = new MethodInvoker(() =>
-                    {
+                //case "errors":
+                //    var method2 = new MethodInvoker(() =>
+                //    {
 
-                    });
-                    if (InvokeRequired)
-                        BeginInvoke(method2);
-                    else
-                        method2();
-                    break;
-                case "config":
-                    //var method3 = new MethodInvoker(() =>
-                    //{
-                    //    switch (pointname.ToLower())
-                    //    {
-                    //        case "add":
-                    //             break;
-                    //    }
-                    //    // для работы списка свойств
-                    //    var key = $"{pointname}\\{propname}";
-                    //    if (!config.ContainsKey(key))
-                    //        config.Add(key, value);
-                    //    else
-                    //        config[key] = value;
-                    //});
-                    //if (InvokeRequired)
-                    //    BeginInvoke(method3);
-                    //else
-                    //    method3();
-                    break;
+                //    });
+                //    if (InvokeRequired)
+                //        BeginInvoke(method2);
+                //    else
+                //        method2();
+                //    break;
             }
         }
 

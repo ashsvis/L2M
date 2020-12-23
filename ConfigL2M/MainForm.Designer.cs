@@ -85,13 +85,12 @@
             // columnHeader2
             // 
             this.columnHeader2.Text = "Address";
-            this.columnHeader2.Width = 70;
             // 
             // columnHeader3
             // 
             this.columnHeader3.Text = "Value";
             this.columnHeader3.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.columnHeader3.Width = 80;
+            this.columnHeader3.Width = 90;
             // 
             // columnHeader4
             // 
@@ -106,7 +105,7 @@
             // columnHeader6
             // 
             this.columnHeader6.Text = "Source";
-            this.columnHeader6.Width = 140;
+            this.columnHeader6.Width = 150;
             // 
             // MainForm
             // 
