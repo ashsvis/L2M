@@ -156,14 +156,15 @@ namespace L2M
             ushort startAddr = 0;
             string dataFormat = "";
             bool good = true;
-            foreach (var item in parentElement.Element("Runtime").Elements("LogikaItem"))
+            var logikaNodeElement = parentElement.Element("Runtime").Element("LogikaNode");
+            var element = logikaNodeElement.Element("Dad");
+            if (element == null || !byte.TryParse(element.Value, out dad))
+                good = false;
+            element = logikaNodeElement.Element("Sad");
+            if (element == null || !byte.TryParse(element.Value, out sad))
+                good = false;
+            foreach (var item in logikaNodeElement.Elements("LogikaItem"))
             {
-                var element = item.Element("Dad");
-                if (element == null || !byte.TryParse(element.Value, out dad))
-                    good = false;
-                element = item.Element("Sad");
-                if (element == null || !byte.TryParse(element.Value, out sad))
-                    good = false;
                 element = item.Element("Channel");
                 if (element == null || !int.TryParse(element.Value, out channel))
                     good = false;
@@ -249,14 +250,15 @@ namespace L2M
             ushort startAddr = 0;
             string dataFormat = "";
             bool good = true;
-            foreach (var item in parentElement.Element("Runtime").Elements("LogikaIndexArray"))
+            var logikaNodeElement = parentElement.Element("Runtime").Element("LogikaNode");
+            var element = logikaNodeElement.Element("Dad");
+            if (element == null || !byte.TryParse(element.Value, out dad))
+                good = false;
+            element = logikaNodeElement.Element("Sad");
+            if (element == null || !byte.TryParse(element.Value, out sad))
+                good = false;
+            foreach (var item in logikaNodeElement.Elements("LogikaIndexArray"))
             {
-                var element = item.Element("Dad");
-                if (element == null || !byte.TryParse(element.Value, out dad))
-                    good = false;
-                element = item.Element("Sad");
-                if (element == null || !byte.TryParse(element.Value, out sad))
-                    good = false;
                 element = item.Element("Channel");
                 if (element == null || !int.TryParse(element.Value, out channel))
                     good = false;

@@ -1,7 +1,9 @@
 ﻿using DataEventClient;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Windows.Forms;
+using System.Xml.Linq;
 using static ConfigL2M.ListViewEx;
 
 namespace ConfigL2M
@@ -10,8 +12,8 @@ namespace ConfigL2M
     {
         private readonly EventClient locEvClient;
 
-        private readonly Dictionary<string, string> config = new Dictionary<string, string>();
-        private readonly Dictionary<string, string> fetching = new Dictionary<string, string>();
+        //private readonly Dictionary<string, string> config = new Dictionary<string, string>();
+        //private readonly Dictionary<string, string> fetching = new Dictionary<string, string>();
 
         private readonly Dictionary<string, ListViewGroup> groups = new Dictionary<string, ListViewGroup>();
 
@@ -28,6 +30,21 @@ namespace ConfigL2M
         private void MainForm_Load(object sender, System.EventArgs e)
         {
             locEvClient.Connect(new[] { "config", "fetching", "archives" }, PropertyUpdate, ShowError, UpdateLocalConnectionStatus);
+            var fileName = "L2M.xml";
+            if (File.Exists(fileName))
+                LoadConfig(fileName);
+        }
+
+        private void LoadConfig(string fileName)
+        {
+            // чтение конфигурационного файла
+            var xdoc = XDocument.Load(fileName);
+            // чтение параметров для опрашивающих потоков
+            foreach (XElement fetchingTcp in xdoc.Element("Config").Element("Fetching").Elements("ChannelTcp"))
+            {
+                //ReadConfigParameters(fetchingTcp, out ipAddress, out ipPort, out sendTimeout, out receiveTimeout);
+                //var parameters = FillParameters(fetchingTcp);
+            }
         }
 
         private void UpdateLocalConnectionStatus(Guid clientId, ClientConnectionStatus status)
@@ -37,17 +54,14 @@ namespace ConfigL2M
                 switch (status)
                 {
                     case ClientConnectionStatus.Opened:
-                        //scServerConnected.State = true;
                         Text = "Подключение к серверу событий установлено.";
                         break;
                     case ClientConnectionStatus.Opening:
-                        //scServerConnected.State = null;
                         Text = "Подключение к серверу событий...";
-                        config.Clear();
-                        fetching.Clear();
+                        //config.Clear();
+                        //fetching.Clear();
                         break;
                     default:
-                        //scServerConnected.State = false;
                         break;
                 }
             });
@@ -78,10 +92,10 @@ namespace ConfigL2M
                     {
                         // для работы списка свойств
                         var key = $"{pointname}:{propname}";
-                        if (!fetching.ContainsKey(key))
-                            fetching.Add(key, value?.TrimEnd());
-                        else
-                            fetching[key] = value?.TrimEnd();
+                        //if (!fetching.ContainsKey(key))
+                        //    fetching.Add(key, value?.TrimEnd());
+                        //else
+                        //    fetching[key] = value?.TrimEnd();
 
                         var keys = key.Split(':');
                         var node = keys[0];
@@ -107,7 +121,7 @@ namespace ConfigL2M
                         if (lvi == null)
                         {
                             lvi = new ListViewItem(key);
-                            lvi.SubItems.Add(ModifyToModbusRegisterAddress(ushort.Parse(index), table).ToString());
+                            lvi.SubItems.Add($"{ModifyToModbusRegisterAddress(ushort.Parse(index), table)} ({key})");
                             lvi.SubItems.Add(vals[0]);
                             lvi.SubItems.Add(vals.Length > 1 ? vals[1] : "");
                             lvi.SubItems.Add(vals.Length > 2 ? vals[2] : "");
@@ -141,24 +155,24 @@ namespace ConfigL2M
                         method2();
                     break;
                 case "config":
-                    var method3 = new MethodInvoker(() =>
-                    {
-                        switch (pointname.ToLower())
-                        {
-                            case "add":
-                                 break;
-                        }
-                        // для работы списка свойств
-                        var key = $"{pointname}\\{propname}";
-                        if (!config.ContainsKey(key))
-                            config.Add(key, value);
-                        else
-                            config[key] = value;
-                    });
-                    if (InvokeRequired)
-                        BeginInvoke(method3);
-                    else
-                        method3();
+                    //var method3 = new MethodInvoker(() =>
+                    //{
+                    //    switch (pointname.ToLower())
+                    //    {
+                    //        case "add":
+                    //             break;
+                    //    }
+                    //    // для работы списка свойств
+                    //    var key = $"{pointname}\\{propname}";
+                    //    if (!config.ContainsKey(key))
+                    //        config.Add(key, value);
+                    //    else
+                    //        config[key] = value;
+                    //});
+                    //if (InvokeRequired)
+                    //    BeginInvoke(method3);
+                    //else
+                    //    method3();
                     break;
             }
         }
