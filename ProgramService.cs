@@ -170,6 +170,11 @@ namespace L2M
                 good = false;
             foreach (var item in logikaNodeElement.Elements("LogikaItem"))
             {
+                element = item.Element("Tag");
+                if (element != null)
+                    tag = element.Value;
+                else
+                    good = false;
                 element = item.Element("Channel");
                 if (element == null || !int.TryParse(element.Value, out channel))
                     good = false;
@@ -271,6 +276,11 @@ namespace L2M
                 good = false;
             foreach (var item in logikaNodeElement.Elements("LogikaIndexArray"))
             {
+                element = item.Element("Tag");
+                if (element != null)
+                    tag = element.Value;
+                else
+                    good = false;
                 element = item.Element("Channel");
                 if (element == null || !int.TryParse(element.Value, out channel))
                     good = false;
@@ -533,27 +543,6 @@ namespace L2M
                                 switch (funcCode)
                                 {
                                     case 3: // - read holding registers
-                                        answer = new List<byte>();
-                                        answer.AddRange(BitConverter.GetBytes(Modbus.Swap(header1)));
-                                        answer.AddRange(BitConverter.GetBytes(Modbus.Swap(header2)));
-                                        bytesCount = Convert.ToByte(regCount * 2);
-                                        packetLen = Convert.ToUInt16(bytesCount + 3);
-                                        answer.AddRange(BitConverter.GetBytes(Modbus.Swap(packetLen)));
-                                        answer.Add(nodeAddr);
-                                        answer.Add(funcCode);
-                                        answer.Add(bytesCount);
-                                        //
-
-                                        for (ushort i = 0; i < regCount; i++)
-                                        {
-                                            var regAddr = Modbus.ModifyToModbusRegisterAddress((ushort)(i + startAddr), (ModbusTable)funcCode);
-                                            ushort value = Modbus.GetRegisterValue(nodeAddr, regAddr);
-                                            answer.AddRange(BitConverter.GetBytes(value));
-                                        }
-
-                                        msg = answer.ToArray();
-                                        stream.Write(msg, 0, msg.Length);
-                                        break;
                                     case 4: // - read input registers
                                         answer = new List<byte>();
                                         answer.AddRange(BitConverter.GetBytes(Modbus.Swap(header1)));
@@ -565,14 +554,13 @@ namespace L2M
                                         answer.Add(funcCode);
                                         answer.Add(bytesCount);
                                         //
-
                                         for (ushort i = 0; i < regCount; i++)
                                         {
                                             var regAddr = Modbus.ModifyToModbusRegisterAddress((ushort)(i + startAddr), (ModbusTable)funcCode);
                                             ushort value = Modbus.GetRegisterValue(nodeAddr, regAddr);
                                             answer.AddRange(BitConverter.GetBytes(value));
                                         }
-
+                                        //
                                         msg = answer.ToArray();
                                         stream.Write(msg, 0, msg.Length);
                                         break;
@@ -635,7 +623,6 @@ namespace L2M
                 catch (SocketException ex)
                 {
                     if (!worker.CancellationPending)
-                        
                         worker.ReportProgress(0, ex.Message);
                     break;
                 }

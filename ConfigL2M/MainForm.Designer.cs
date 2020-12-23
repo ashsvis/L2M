@@ -106,7 +106,7 @@
             // columnHeader6
             // 
             this.columnHeader6.Text = "Source";
-            this.columnHeader6.Width = 130;
+            this.columnHeader6.Width = 140;
             // 
             // MainForm
             // 
