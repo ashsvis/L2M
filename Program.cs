@@ -154,7 +154,7 @@ namespace L2M
             ModbusTable modbusTable = ModbusTable.None;
             LogikaParam paramKind = LogikaParam.Parameter;
             ushort startAddr = 0;
-            string dataFormat = "";
+            string dataFormat = "", node = "Logika";
             bool good = true;
             var logikaNodeElement = parentElement.Element("Runtime").Element("LogikaNode");
             var element = logikaNodeElement.Element("Dad");
@@ -162,6 +162,11 @@ namespace L2M
                 good = false;
             element = logikaNodeElement.Element("Sad");
             if (element == null || !byte.TryParse(element.Value, out sad))
+                good = false;
+            element = logikaNodeElement.Element("Node");
+            if (element != null)
+                node = element.Value;
+            else
                 good = false;
             foreach (var item in logikaNodeElement.Elements("LogikaItem"))
             {
@@ -225,6 +230,7 @@ namespace L2M
                 {
                     parameters.Add(new RequestData()
                     {
+                        Node = node,
                         Dad = dad,
                         Sad = sad,
                         Channel = channel,
@@ -248,7 +254,7 @@ namespace L2M
             ModbusTable modbusTable = ModbusTable.None;
             LogikaParam paramKind = LogikaParam.Parameter;
             ushort startAddr = 0;
-            string dataFormat = "";
+            string dataFormat = "", node = "Logika";
             bool good = true;
             var logikaNodeElement = parentElement.Element("Runtime").Element("LogikaNode");
             var element = logikaNodeElement.Element("Dad");
@@ -256,6 +262,11 @@ namespace L2M
                 good = false;
             element = logikaNodeElement.Element("Sad");
             if (element == null || !byte.TryParse(element.Value, out sad))
+                good = false;
+            element = logikaNodeElement.Element("Node");
+            if (element != null)
+                node = element.Value;
+            else
                 good = false;
             foreach (var item in logikaNodeElement.Elements("LogikaIndexArray"))
             {
@@ -324,6 +335,7 @@ namespace L2M
                     {
                         parameters.Add(new RequestData()
                         {
+                            Node = node,
                             Dad = dad,
                             Sad = sad,
                             Channel = channel,

@@ -2,7 +2,7 @@
 {
     public class RequestData
     {
-        public string Node { get; set; } = "Logika";
+        public string Node { get; set; }
         public string Tag { get; set; }
         public byte Dad { get; set; }
         public byte Sad { get; set; }

@@ -16,6 +16,7 @@
         <LogikaNode>
           <Dad>1</Dad>
           <Sad>3</Sad>
+          <Node>Grp4Tr3</Node>
           <!-- Масса газа нарастающим итогом -->
           <LogikaItem>
             <Channel>1</Channel>

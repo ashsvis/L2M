@@ -85,7 +85,7 @@
             // columnHeader2
             // 
             this.columnHeader2.Text = "Address";
-            this.columnHeader2.Width = 80;
+            this.columnHeader2.Width = 70;
             // 
             // columnHeader3
             // 
@@ -96,6 +96,7 @@
             // columnHeader4
             // 
             this.columnHeader4.Text = "Unit";
+            this.columnHeader4.Width = 70;
             // 
             // columnHeader5
             // 
@@ -105,7 +106,7 @@
             // columnHeader6
             // 
             this.columnHeader6.Text = "Source";
-            this.columnHeader6.Width = 120;
+            this.columnHeader6.Width = 130;
             // 
             // MainForm
             // 
