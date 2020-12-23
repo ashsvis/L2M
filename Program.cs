@@ -417,10 +417,9 @@ namespace L2M
                             var value = Modbus.GetParamValue(new ParamAddr(p.NodeAddr,
                                 Modbus.ModifyToModbusRegisterAddress(p.StartAddr, ModbusTable.Holdings)));
                             if (!string.IsNullOrWhiteSpace(value))
-                                Logika.WriteToParameter(socket, p.Dad, p.Sad, p.Channel, p.Parameter, p.AnswerWait, value);
+                                Logika.WriteToParameter(socket, p, value);
                         }
-                        Logika.FetchParameter(socket, p.Dad, p.Sad, p.Channel, p.Parameter,
-                                              p.NodeAddr, p.ModbusTable, p.StartAddr, p.FormatData, p.AnswerWait);
+                        Logika.FetchParameter(socket, p);
                         break;
                     case LogikaParam.IndexArray:
                         {
@@ -429,10 +428,9 @@ namespace L2M
                                 var value = Modbus.GetParamValue(new ParamAddr(p.NodeAddr,
                                     Modbus.ModifyToModbusRegisterAddress(p.StartAddr, ModbusTable.Holdings)));
                                 if (!string.IsNullOrWhiteSpace(value))
-                                    Logika.WriteToIndexArray(socket, p.Dad, p.Sad, p.Channel, p.Parameter, p.ArrayIndexNumber, p.AnswerWait, value);
+                                    Logika.WriteToIndexArray(socket, p, value);
                             }
-                            Logika.FetchIndexArray(socket, p.Dad, p.Sad, p.Channel, p.Parameter, p.ArrayIndexNumber,
-                                                  p.NodeAddr, p.ModbusTable, p.StartAddr, p.FormatData, p.AnswerWait);
+                            Logika.FetchIndexArray(socket, p);
                         }
                         break;
                 }

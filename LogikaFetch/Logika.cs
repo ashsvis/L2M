@@ -9,10 +9,10 @@ namespace L2M
 {
     public static class Logika
     {
-        public static void WriteToParameter(Socket socket, byte dad, byte sad, int channel, int parameter, int answerWait, string value)
+        public static void WriteToParameter(Socket socket, RequestData request, string value)
         {
-            socket.Send(PrepareToWriteParameter(dad, sad, channel, parameter, value));
-            Thread.Sleep(answerWait);
+            socket.Send(PrepareToWriteParameter(request, value));
+            Thread.Sleep(request.AnswerWait);
             var buff = new byte[8192];
             var numBytes = socket.Receive(buff);
             if (numBytes > 0)
@@ -21,22 +21,22 @@ namespace L2M
                 if (CheckAnswer(answer))
                 {
                     var result = EncodeWriteParameter(answer);
-                    if (result.Dad == dad && result.Sad == sad && result.Fnc == 0x7f &&
-                        result.Channel == channel && result.Parameter == parameter)
+                    if (result.Dad == request.Dad && result.Sad == request.Sad && result.Fnc == 0x7f &&
+                        result.Channel == request.Channel && result.Parameter == request.Parameter)
                     {
                         if (!string.IsNullOrWhiteSpace(result.Value))
-                            throw new Exception($"Logika DAD:{dad} {channel}.{parameter} {result.Value}");
+                            throw new Exception($"Logika {request.Dad}.{request.Channel}.{request.Parameter} {result.Value}");
                     }
                 }
                 else
-                    throw new Exception($"Logika DAD:{dad} {channel}.{parameter} checksumm error");
+                    throw new Exception($"Logika {request.Dad}.{request.Channel}.{request.Parameter} checksumm error");
             }
         }
 
-        public static void WriteToIndexArray(Socket socket, byte dad, byte sad, int channel, int arrayNumber, int arrayIndex, int answerWait, string value)
+        public static void WriteToIndexArray(Socket socket, RequestData request, string value)
         {
-            socket.Send(PrepareToWriteArrayIndex(dad, sad, channel, arrayNumber, arrayIndex, value));
-            Thread.Sleep(answerWait);
+            socket.Send(PrepareToWriteArrayIndex(request, value));
+            Thread.Sleep(request.AnswerWait);
             var buff = new byte[8192];
             var numBytes = socket.Receive(buff);
             if (numBytes > 0)
@@ -45,23 +45,22 @@ namespace L2M
                 if (CheckAnswer(answer))
                 {
                     var result = EncodeWriteIndexAnswer(answer);
-                    if (result.Dad == dad && result.Sad == sad && result.Fnc == 0x7f &&
-                        result.Channel == channel && result.Parameter == arrayNumber)
+                    if (result.Dad == request.Dad && result.Sad == request.Sad && result.Fnc == 0x7f &&
+                        result.Channel == request.Channel && result.Parameter == request.Parameter)
                     {
                         if (!string.IsNullOrWhiteSpace(result.Value))
-                            throw new Exception($"Logika DAD:{dad} {channel}.{arrayNumber}.{arrayIndex} {result.Value}");
+                            throw new Exception($"Logika {request.Dad}.{request.Channel}.{request.Parameter}.{request.ArrayIndexNumber} {result.Value}");
                     }
                 }
                 else
-                    throw new Exception($"Logika DAD:{dad} {channel}.{arrayNumber}.{arrayIndex} checksumm error");
+                    throw new Exception($"Logika {request.Dad}.{request.Channel}.{request.Parameter}.{request.ArrayIndexNumber} checksumm error");
             }
         }
 
-        public static void FetchIndexArray(Socket socket, byte dad, byte sad, int channel, int arrayNumber, int arrayIndex, 
-            byte nodeAddr, ModbusTable modbusTable, ushort startAddr, string dataFormat, int answerWait)
+        public static void FetchIndexArray(Socket socket, RequestData request)
         {
-            socket.Send(PrepareFetchArrayIndex(dad, sad, channel, arrayNumber, arrayIndex, 1));
-            Thread.Sleep(answerWait);
+            socket.Send(PrepareFetchArrayIndex(request, 1));
+            Thread.Sleep(request.AnswerWait);
             var buff = new byte[8192];
             var numBytes = socket.Receive(buff);
             if (numBytes > 0)
@@ -70,17 +69,17 @@ namespace L2M
                 if (CheckAnswer(answer))
                 {
                     var result = EncodeIndexAnswer(answer);
-                    if (result.Dad == dad && result.Sad == sad && result.Fnc == 0x14 &&
-                        result.Channel == channel && result.Parameter == arrayNumber)
+                    if (result.Dad == request.Dad && result.Sad == request.Sad && result.Fnc == 0x14 &&
+                        result.Channel == request.Channel && result.Parameter == request.Parameter)
                     {
-                        CheckAndStoreData(nodeAddr, modbusTable, startAddr, dataFormat, result);
+                        CheckAndStoreData(request.NodeAddr, request.ModbusTable, request.StartAddr, request.FormatData, result);
 
-                        Program.LocEvClient.UpdateProperty("fetching", $"{nodeAddr}:{modbusTable}:{startAddr}",
-                            $"Logika {dad}.{channel:00}.{arrayNumber:000}[{arrayIndex:00}]", $"{result.Value}\t{result.Unit}\t{result.Time}");
+                        Program.LocEvClient.UpdateProperty("fetching", $"{request.NodeAddr}:{request.ModbusTable}:{request.StartAddr}",
+                            $"Logika {request.Dad}.{request.Channel:00}.{request.Parameter:000}[{request.ArrayIndexNumber:00}]", $"{result.Value}\t{result.Unit}\t{result.Time}");
                     }
                 }
                 else
-                    throw new Exception($"Logika {dad}.{channel:00}.{arrayNumber:000}[{arrayIndex:00}] checksumm error");
+                    throw new Exception($"Logika {request.Dad}.{request.Channel:00}.{request.Parameter:000}[{request.ArrayIndexNumber:00}] checksumm error");
             }
         }
 
@@ -228,16 +227,16 @@ namespace L2M
             };
         }
 
-        static byte[] PrepareFetchArrayIndex(byte dad, byte sad, int channel, int array, int first, int count)
+        static byte[] PrepareFetchArrayIndex(RequestData request, int count)
         {
             byte FNC = 0x0c; // код функции для запроса значения индексного массива
-            var list = new List<byte> { DLE, SOH, dad, sad, DLE, ISI, FNC, DLE, STX };
+            var list = new List<byte> { DLE, SOH, request.Dad, request.Sad, DLE, ISI, FNC, DLE, STX };
             list.Add(HT);
-            list.AddRange(cp866unicode.OemString($"{channel}"));
+            list.AddRange(cp866unicode.OemString($"{request.Channel}"));
             list.Add(HT);
-            list.AddRange(cp866unicode.OemString($"{array}"));
+            list.AddRange(cp866unicode.OemString($"{request.Parameter}"));
             list.Add(HT);
-            list.AddRange(cp866unicode.OemString($"{first}"));
+            list.AddRange(cp866unicode.OemString($"{request.ArrayIndexNumber}"));
             list.Add(HT);
             list.AddRange(cp866unicode.OemString($"{count}"));
             list.Add(FF);
@@ -252,14 +251,14 @@ namespace L2M
             return list.ToArray();
         }
 
-        private static byte[] PrepareToWriteParameter(byte dad, byte sad, int channel, int parameter, string value)
+        private static byte[] PrepareToWriteParameter(RequestData request, string value)
         {
             byte FNC = 0x03; // код функции для записи значения параметра
-            var list = new List<byte> { DLE, SOH, dad, sad, DLE, ISI, FNC, DLE, STX };
+            var list = new List<byte> { DLE, SOH, request.Dad, request.Sad, DLE, ISI, FNC, DLE, STX };
             list.Add(HT);
-            list.AddRange(cp866unicode.OemString($"{channel}"));
+            list.AddRange(cp866unicode.OemString($"{request.Channel}"));
             list.Add(HT);
-            list.AddRange(cp866unicode.OemString($"{parameter}"));
+            list.AddRange(cp866unicode.OemString($"{request.Parameter}"));
             list.Add(FF);
 
             list.Add(HT);
@@ -277,16 +276,16 @@ namespace L2M
             return list.ToArray();
         }
 
-        static byte[] PrepareToWriteArrayIndex(byte dad, byte sad, int channel, int array, int first, string value)
+        static byte[] PrepareToWriteArrayIndex(RequestData request, string value)
         {
             byte FNC = 0x14; // код функции для записи значения индексного массива
-            var list = new List<byte> { DLE, SOH, dad, sad, DLE, ISI, FNC, DLE, STX };
+            var list = new List<byte> { DLE, SOH, request.Dad, request.Sad, DLE, ISI, FNC, DLE, STX };
             list.Add(HT);
-            list.AddRange(cp866unicode.OemString($"{channel}"));
+            list.AddRange(cp866unicode.OemString($"{request.Channel}"));
             list.Add(HT);
-            list.AddRange(cp866unicode.OemString($"{array}"));
+            list.AddRange(cp866unicode.OemString($"{request.Parameter}"));
             list.Add(HT);
-            list.AddRange(cp866unicode.OemString($"{first}"));
+            list.AddRange(cp866unicode.OemString($"{request.ArrayIndexNumber}"));
             list.Add(HT);
             list.AddRange(cp866unicode.OemString("1"));
             list.Add(FF);
@@ -306,11 +305,10 @@ namespace L2M
             return list.ToArray();
         }
 
-        public static void FetchParameter(Socket socket, byte dad, byte sad, int channel, int parameter,
-            byte nodeAddr, ModbusTable modbusTable, ushort startAddr, string dataFormat, int answerWait)
+        public static void FetchParameter(Socket socket, RequestData request)
         {
-            socket.Send(PrepareFetchParam(dad, sad, channel, parameter));
-            Thread.Sleep(answerWait);
+            socket.Send(PrepareFetchParam(request.Dad, request.Sad, request.Channel, request.Parameter));
+            Thread.Sleep(request.AnswerWait);
             var buff = new byte[8192];
             var numBytes = socket.Receive(buff);
             if (numBytes > 0)
@@ -319,17 +317,17 @@ namespace L2M
                 if (CheckAnswer(answer))
                 {
                     var result = EncodeFetchAnswer(answer);
-                    if (result.Dad == sad && result.Sad == dad && result.Fnc == 3 &&
-                        result.Channel == channel && result.Parameter == parameter)
+                    if (result.Dad == request.Sad && result.Sad == request.Dad && result.Fnc == 3 &&
+                        result.Channel == request.Channel && result.Parameter == request.Parameter)
                     {
-                        CheckAndStoreData(nodeAddr, modbusTable, startAddr, dataFormat, result);
+                        CheckAndStoreData(request.NodeAddr, request.ModbusTable, request.StartAddr, request.FormatData, result);
 
-                        Program.LocEvClient.UpdateProperty("fetching", $"{nodeAddr}:{modbusTable}:{startAddr}", 
-                            $"Logika {dad}.{channel:00}.{parameter:000}", $"{result.Value}\t{result.Unit}\t{result.Time}");
+                        Program.LocEvClient.UpdateProperty("fetching", $"{request.NodeAddr}:{request.ModbusTable}:{request.StartAddr}", 
+                            $"Logika {request.Dad}.{request.Channel:00}.{request.Parameter:000}", $"{result.Value}\t{result.Unit}\t{result.Time}");
                     }
                 }
                 else
-                    throw new Exception($"Logika {dad}.{channel:00}.{parameter:000} checksumm error");
+                    throw new Exception($"Logika {request.Dad}.{request.Channel:00}.{request.Parameter:000} checksumm error");
             }
         }
 
