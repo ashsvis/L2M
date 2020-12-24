@@ -15,21 +15,30 @@ namespace ReportL2M
 
         static void Main(string[] args)
         {
-            var Th = FetchRegiser(1, 4, 101, 24, Period.Hours);
-            var Td = FetchRegiser(1, 4, 149, 21, Period.Days);
-            var Tm = FetchRegiser(1, 4, 191, 5, Period.Months);
-            var Mh = FetchRegiser(1, 4, 201, 24, Period.Hours);
-            var Md = FetchRegiser(1, 4, 249, 21, Period.Days);
-            var Mm= FetchRegiser(1, 4, 291, 5, Period.Months);
-            var Vh = FetchRegiser(1, 4, 301, 24, Period.Hours);
-            var Vd = FetchRegiser(1, 4, 349, 21, Period.Days);
-            var Vm = FetchRegiser(1, 4, 391, 5, Period.Months);
-            var Voh = FetchRegiser(1, 4, 401, 24, Period.Hours);
-            var Vod = FetchRegiser(1, 4, 449, 21, Period.Days);
-            var Vom = FetchRegiser(1, 4, 491, 5, Period.Months);
-            var toh = FetchRegiser(1, 4, 501, 24, Period.Hours);
-            var tod = FetchRegiser(1, 4, 549, 21, Period.Days);
-            var tom = FetchRegiser(1, 4, 591, 5, Period.Months);
+            var hour = (int)FetchRegiser(1, 4, 17);
+            if (float.IsNaN(hour))
+                hour = 10;
+            var day = (int)FetchRegiser(1, 4, 19);
+            if (float.IsNaN(day))
+                day = 1;
+            var Th = FetchRegiser(1, 4, 101, 24, Period.Hours, day, hour);
+            var Td = FetchRegiser(1, 4, 149, 21, Period.Days, day, hour);
+            var Tm = FetchRegiser(1, 4, 191, 5, Period.Months, day, hour);
+            var Mh = FetchRegiser(1, 4, 201, 24, Period.Hours, day, hour);
+            var Md = FetchRegiser(1, 4, 249, 21, Period.Days, day, hour);
+            var Mm= FetchRegiser(1, 4, 291, 5, Period.Months, day, hour);
+            var Vh = FetchRegiser(1, 4, 301, 24, Period.Hours, day, hour);
+            var Vd = FetchRegiser(1, 4, 349, 21, Period.Days, day, hour);
+            var Vm = FetchRegiser(1, 4, 391, 5, Period.Months, day, hour);
+            var Voh = FetchRegiser(1, 4, 401, 24, Period.Hours, day, hour);
+            var Vod = FetchRegiser(1, 4, 449, 21, Period.Days, day, hour);
+            var Vom = FetchRegiser(1, 4, 491, 5, Period.Months, day, hour);
+            var toh = FetchRegiser(1, 4, 501, 24, Period.Hours, day, hour);
+            var tod = FetchRegiser(1, 4, 549, 21, Period.Days, day, hour);
+            var tom = FetchRegiser(1, 4, 591, 5, Period.Months, day, hour);
+            var Pah = FetchRegiser(1, 4, 601, 24, Period.Hours, day, hour);
+            var Pad = FetchRegiser(1, 4, 649, 21, Period.Days, day, hour);
+            var Pam = FetchRegiser(1, 4, 691, 5, Period.Months, day, hour);
 
             var tmp = Properties.Resources.logikatemplate;
             tmp = tmp.Replace("##title##", "Поз.FQR-21/3. Архивные данные значений от ГРП-4 в кольцо природного газа от трубопровода №3");
@@ -43,6 +52,7 @@ $@"<tr>
 <td {style}>Mh1_t1, кг</td>
 <td {style}>Vh1_t1, м3</td>
 <td {style}>Voh1_t1, м3</td>
+<td {style}>Pah1_t1, МПа</td>
 </tr>");
             style = "style=\"text-align:right;\"";
             var rows = new List<string>();
@@ -56,6 +66,7 @@ $@"<tr>
 <td {style}>{Mh[to.Key]:0.00}</td>
 <td {style}>{Vh[to.Key]:0.00}</td>
 <td {style}>{Voh[to.Key]:0.00}</td>
+<td {style}>{Pah[to.Key]:0.00}</td>
 </tr>";
                 rows.Add(row);
             }
@@ -69,6 +80,7 @@ $@"<tr>
 <td {style}>Md1_t1, кг</td>
 <td {style}>Vd1_t1, м3</td>
 <td {style}>Vod1_t1, м3</td>
+<td {style}>Pad1_t1, МПа</td>
 </tr>");
             style = "style=\"text-align:right;\"";
             rows = new List<string>();
@@ -82,6 +94,7 @@ $@"<tr>
 <td {style}>{Md[to.Key]:0.00}</td>
 <td {style}>{Vd[to.Key]:0.00}</td>
 <td {style}>{Vod[to.Key]:0.00}</td>
+<td {style}>{Pad[to.Key]:0.00}</td>
 </tr>";
                 rows.Add(row);
             }
@@ -95,6 +108,7 @@ $@"<tr>
 <td {style}>Mm1_t1, кг</td>
 <td {style}>Vm1_t1, м3</td>
 <td {style}>Vom1_t1, м3</td>
+<td {style}>Pam1_t1, МПа</td>
 </tr>");
             style = "style=\"text-align:right;\"";
             rows = new List<string>();
@@ -108,6 +122,7 @@ $@"<tr>
 <td {style}>{Mm[to.Key]:0.00}</td>
 <td {style}>{Vm[to.Key]:0.00}</td>
 <td {style}>{Vom[to.Key]:0.00}</td>
+<td {style}>{Pam[to.Key]:0.00}</td>
 </tr>";
                 rows.Add(row);
             }
@@ -120,7 +135,13 @@ $@"<tr>
             //Console.ReadKey();
         }
 
-        private static IDictionary<DateTime, float> FetchRegiser(byte node, byte func, ushort addr, int count, Period period)
+        private static float FetchRegiser(byte node, byte func, ushort addr)
+        {
+            var dict = FetchRegiser(node, func, addr, 1);
+            return dict.Values.Count == 1 ? dict.Values.First() : float.NaN;
+        }
+
+        private static IDictionary<DateTime, float> FetchRegiser(byte node, byte func, ushort addr, int count = 1, Period period = Period.None, int day = 0, int hour = 0)
         {
             var dict = new SortedDictionary<DateTime, float>();
             try
@@ -140,7 +161,15 @@ $@"<tr>
                         var fetchParams = Enumerable.Range(0, count).Select(item => 
                                   new AskParamData() { Node = node, Func = func, RegAddr = addr + item * 2, TypeValue = "float", TypeSwap = "DCBA" });
                         var now = DateTime.Now;
-                        var date = new DateTime(now.Year, now.Month, period == Period.Days ? now.Day : 1, period == Period.Hours ? now.Hour : 11, 0, 0);
+                        var date = now;
+                        if (period != Period.None)
+                        {
+                            if (period == Period.Days && now.Hour < hour)
+                                now = now.AddDays(-1);
+                            if (period == Period.Months && now.Day == day && now.Hour < hour)
+                                now = now.AddMonths(-1);
+                            date = new DateTime(now.Year, now.Month, period == Period.Days || period == Period.Hours ? now.Day : day, period == Period.Hours ? now.Hour : hour, 0, 0);
+                        }
                         foreach (var item in fetchParams)
                         {
                             socket.Send(PrepareFetchParam(item.Node, item.Func, item.RegAddr, item.TypeValue));
@@ -376,6 +405,7 @@ $@"<tr>
 
     public enum Period
     {
+        None,
         Hours,
         Days,
         Months

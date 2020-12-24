@@ -330,6 +330,42 @@
             <DataFormat>IEEEFP</DataFormat>
             <AnswerWait>160</AnswerWait>
           </LogikaIndexArray>
+          <!-- Архив Часовой средних значений абсолютного давления -->
+          <LogikaIndexArray>
+            <Tag>Pah</Tag>
+            <Channel>1</Channel>
+            <ArrayNumber>205</ArrayNumber>
+            <IndexFirst>1</IndexFirst>
+            <ItemsCount>24</ItemsCount>
+            <ModbusNode>1</ModbusNode>
+            <InputRegister>600</InputRegister>
+            <DataFormat>IEEEFP</DataFormat>
+            <AnswerWait>160</AnswerWait>
+          </LogikaIndexArray>
+          <!-- Архив Суточный средних значений абсолютного давления -->
+          <LogikaIndexArray>
+            <Tag>Pad</Tag>
+            <Channel>1</Channel>
+            <ArrayNumber>206</ArrayNumber>
+            <IndexFirst>1</IndexFirst>
+            <ItemsCount>21</ItemsCount>
+            <ModbusNode>1</ModbusNode>
+            <InputRegister>648</InputRegister>
+            <DataFormat>IEEEFP</DataFormat>
+            <AnswerWait>160</AnswerWait>
+          </LogikaIndexArray>
+          <!-- Архив Месячный средних значений абсолютного давления -->
+          <LogikaIndexArray>
+            <Tag>Pam</Tag>
+            <Channel>1</Channel>
+            <ArrayNumber>207</ArrayNumber>
+            <IndexFirst>1</IndexFirst>
+            <ItemsCount>5</ItemsCount>
+            <ModbusNode>1</ModbusNode>
+            <InputRegister>690</InputRegister>
+            <DataFormat>IEEEFP</DataFormat>
+            <AnswerWait>160</AnswerWait>
+          </LogikaIndexArray>
         </LogikaNode>
       </Runtime>
     </ChannelTcp>
