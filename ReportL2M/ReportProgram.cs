@@ -15,9 +15,21 @@ namespace ReportL2M
     {
         static void Main(string[] args)
         {
-            var connection = "Data Source=localhost\\SQLEXPRESS;Initial Catalog=GRPAFH;Trusted_Connection=Yes;";
-            File.WriteAllText("AFHGRPTR2A.HTM", BuildGrp4Report(1, "Grp4Tr2", "2", connection), Encoding.Default);
-            File.WriteAllText("AFHGRPTR3A.HTM", BuildGrp4Report(2, "Grp4Tr3", "3", connection), Encoding.Default);
+            //"Data Source=localhost\\SQLEXPRESS;Initial Catalog=GRPAFH;Trusted_Connection=Yes;";
+            var connection = Properties.Settings.Default.ConnectionString;
+            var path1 = Properties.Settings.Default.Path1;
+            var path2 = Properties.Settings.Default.Path2;
+            foreach (var path in new[] { path1, path2 })
+            {
+                if (string.IsNullOrWhiteSpace(path) || Directory.Exists(path))
+                {
+                    File.WriteAllText(Path.Combine(path, "AFHGRPTR2A.HTM"), BuildGrp4Report(1, "Grp4Tr2", "2", connection), Encoding.Default);
+                    File.WriteAllText(Path.Combine(path, "AFHGRPTR2B.HTM"), BuildPlantGrp4Report("Grp4Tr2", "2", connection), Encoding.Default);
+                    File.WriteAllText(Path.Combine(path, "AFHGRPTR3A.HTM"), BuildGrp4Report(2, "Grp4Tr3", "3", connection), Encoding.Default);
+                    File.WriteAllText(Path.Combine(path, "AFHGRPTR3B.HTM"), BuildPlantGrp4Report("Grp4Tr3", "3", connection), Encoding.Default);
+                }
+                if (path1 == path2) break;
+            }
         }
 
         private static string BuildGrp4Report(byte node, string table, string tube, string connection)
@@ -89,6 +101,20 @@ namespace ReportL2M
             tmp = tmp.Replace("##RowsDayTable##", string.Join("\r\n", PrepareRows(server, $"{table}D", 31)));
             tmp = tmp.Replace("##HeaderMonthTable##", PrepareHeaders("m"));
             tmp = tmp.Replace("##RowsMonthTable##", string.Join("\r\n", PrepareRows(server, $"{table}M", 5)));
+            return tmp;
+        }
+
+        private static string BuildPlantGrp4Report(string table, string tube, string connection)
+        {
+            var server = new SqlServer { Connection = connection };
+            var tmp = Properties.Resources.logikatemplate;
+            tmp = tmp.Replace("##title##", $"Поз.FQR-21/{tube}. Архивные данные значений от ГРП-4 в кольцо природного газа от трубопровода №{tube}");
+            tmp = tmp.Replace("##HeaderHourTable##", PrepareHeaders("h"));
+            tmp = tmp.Replace("##RowsHourTable##", string.Join("\r\n", PrepareRows(server, $"{table}H", 36)));
+            tmp = tmp.Replace("##HeaderDayTable##", PrepareHeaders("d"));
+            tmp = tmp.Replace("##RowsDayTable##", string.Join("\r\n", PrepareRows(server, $"Plant{table}D", 31)));
+            tmp = tmp.Replace("##HeaderMonthTable##", PrepareHeaders("m"));
+            tmp = tmp.Replace("##RowsMonthTable##", string.Join("\r\n", PrepareRows(server, $"Plant{table}M", 5)));
             return tmp;
         }
 
