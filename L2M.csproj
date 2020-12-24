@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AnswerData.cs" />
+    <Compile Include="Common\SqlServer.cs" />
     <Compile Include="DataEvents\IClientCallback.cs" />
     <Compile Include="DataEvents\IClientEventService.cs" />
     <Compile Include="DataEvents\ModbusIntegratorEventService.cs" />

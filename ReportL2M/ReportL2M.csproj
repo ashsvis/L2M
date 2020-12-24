@@ -49,6 +49,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="SqlServer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
