@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -61,29 +62,51 @@ namespace L2M
             }
         }
 
+        private static bool ChechLiveTimeout(object key)
+        {
+            if (hashtable.ContainsKey(key))
+            {
+                if (DateTime.Now - (DateTime)hashtable[key] > TimeSpan.FromMinutes(2))
+                    hashtable.Remove(key);
+                else
+                    return true;
+            }
+            return false;
+        }
+
         public static void FetchIndexArray(Socket socket, RequestData request)
         {
+            if (ChechLiveTimeout(request.Dad))
+                return;
             socket.Send(PrepareFetchArrayIndex(request, 1));
             Thread.Sleep(request.AnswerWait);
             var buff = new byte[8192];
-            var numBytes = socket.Receive(buff);
-            if (numBytes > 0)
+            try
             {
-                var answer = CleanAnswer(buff);
-                if (CheckAnswer(answer))
+                var numBytes = socket.Receive(buff);
+                if (numBytes > 0)
                 {
-                    var result = EncodeIndexAnswer(answer);
-                    if (result.Dad == request.Dad && result.Sad == request.Sad && result.Fnc == 0x14 &&
-                        result.Channel == request.Channel && result.Parameter == request.Parameter)
+                    var answer = CleanAnswer(buff);
+                    if (CheckAnswer(answer))
                     {
-                        CheckAndStoreData(request, result);
-                        ProgramService.LocEvClient.UpdateProperty("fetching", request.AsAddress,
-                            request.AsArrayIndex, $"{result.Value}\t{result.Unit}\t{result.Time}");
+                        var result = EncodeIndexAnswer(answer);
+                        if (result.Dad == request.Dad && result.Sad == request.Sad && result.Fnc == 0x14 &&
+                            result.Channel == request.Channel && result.Parameter == request.Parameter)
+                        {
+                            CheckAndStoreData(request, result);
+                            ProgramService.LocEvClient.UpdateProperty("fetching", request.AsAddress,
+                                request.AsArrayIndex, $"{result.Value}\t{result.Unit}\t{result.Time}");
+                        }
                     }
+                    else
+                        ProgramService.LocEvClient.UpdateProperty("errors", request.AsAddress,
+                                                    request.AsArrayIndex, "ошибка к.с.?");
                 }
-                else
-                    ProgramService.LocEvClient.UpdateProperty("errors", request.AsAddress,
-                                                request.AsArrayIndex, "ошибка к.с.?");
+            }
+            catch (SocketException ex)
+            {
+                if (ex.SocketErrorCode == SocketError.TimedOut)
+                    hashtable[request.Dad] = DateTime.Now;
             }
         }
 
@@ -309,29 +332,41 @@ namespace L2M
             return list.ToArray();
         }
 
+        static Hashtable hashtable = new Hashtable();
+
         public static void FetchParameter(Socket socket, RequestData request)
         {
+            if (ChechLiveTimeout(request.Dad))
+                return;
             socket.Send(PrepareFetchParam(request.Dad, request.Sad, request.Channel, request.Parameter));
             Thread.Sleep(request.AnswerWait);
             var buff = new byte[8192];
-            var numBytes = socket.Receive(buff);
-            if (numBytes > 0)
+            try
             {
-                var answer = CleanAnswer(buff);
-                if (CheckAnswer(answer))
+                var numBytes = socket.Receive(buff);
+                if (numBytes > 0)
                 {
-                    var result = EncodeFetchAnswer(answer);
-                    if (result.Dad == request.Sad && result.Sad == request.Dad && result.Fnc == 3 &&
-                        result.Channel == request.Channel && result.Parameter == request.Parameter)
+                    var answer = CleanAnswer(buff);
+                    if (CheckAnswer(answer))
                     {
-                        CheckAndStoreData(request, result);
-                        ProgramService.LocEvClient.UpdateProperty("fetching", request.AsAddress, 
-                            request.AsParameter, $"{result.Value}\t{result.Unit}\t{result.Time}");
+                        var result = EncodeFetchAnswer(answer);
+                        if (result.Dad == request.Sad && result.Sad == request.Dad && result.Fnc == 3 &&
+                            result.Channel == request.Channel && result.Parameter == request.Parameter)
+                        {
+                            CheckAndStoreData(request, result);
+                            ProgramService.LocEvClient.UpdateProperty("fetching", request.AsAddress,
+                                request.AsParameter, $"{result.Value}\t{result.Unit}\t{result.Time}");
+                        }
                     }
+                    else
+                        ProgramService.LocEvClient.UpdateProperty("errors", request.AsAddress,
+                            request.AsParameter, "ошибка к.с.?");
                 }
-                else
-                    ProgramService.LocEvClient.UpdateProperty("errors", request.AsAddress,
-                        request.AsParameter, "ошибка к.с.?");
+            }
+            catch (SocketException ex)
+            {
+                if (ex.SocketErrorCode == SocketError.TimedOut)
+                    hashtable[request.Dad] = DateTime.Now;
             }
         }
 
