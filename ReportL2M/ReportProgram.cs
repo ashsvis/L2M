@@ -47,12 +47,12 @@ namespace ReportL2M
 
             tmp = tmp.Replace("##HeaderHourTable##",
 $@"<tr>
-<td {style}>Toh1_t1, ч</td>
-<td {style}>Th1_t1, °C</td>
-<td {style}>Mh1_t1, кг</td>
-<td {style}>Vh1_t1, м3</td>
-<td {style}>Voh1_t1, м3</td>
-<td {style}>Pah1_t1, МПа</td>
+<td {style}>Toh_t1, ч</td>
+<td {style}>Th_t1, °C</td>
+<td {style}>Mh_t1, кг</td>
+<td {style}>Vh_t1, м3</td>
+<td {style}>Voh_t1, м3</td>
+<td {style}>Pah_t1, МПа</td>
 </tr>");
             style = "style=\"text-align:right;\"";
             var rows = new List<string>();
@@ -75,12 +75,12 @@ $@"<tr>
 //--------------------
             tmp = tmp.Replace("##HeaderDayTable##",
 $@"<tr>
-<td {style}>Tod1_t1, ч</td>
-<td {style}>Td1_t1, °C</td>
-<td {style}>Md1_t1, кг</td>
-<td {style}>Vd1_t1, м3</td>
-<td {style}>Vod1_t1, м3</td>
-<td {style}>Pad1_t1, МПа</td>
+<td {style}>Tod_t1, ч</td>
+<td {style}>Td_t1, °C</td>
+<td {style}>Md_t1, кг</td>
+<td {style}>Vd_t1, м3</td>
+<td {style}>Vod_t1, м3</td>
+<td {style}>Pad_t1, МПа</td>
 </tr>");
             style = "style=\"text-align:right;\"";
             rows = new List<string>();
@@ -103,12 +103,12 @@ $@"<tr>
 //--------------------
             tmp = tmp.Replace("##HeaderMonthTable##",
 $@"<tr>
-<td {style}>Tom1_t1, ч</td>
-<td {style}>Tm1_t1, °C</td>
-<td {style}>Mm1_t1, кг</td>
-<td {style}>Vm1_t1, м3</td>
-<td {style}>Vom1_t1, м3</td>
-<td {style}>Pam1_t1, МПа</td>
+<td {style}>Tom_t1, ч</td>
+<td {style}>Tm_t1, °C</td>
+<td {style}>Mm_t1, кг</td>
+<td {style}>Vm_t1, м3</td>
+<td {style}>Vom_t1, м3</td>
+<td {style}>Pam_t1, МПа</td>
 </tr>");
             style = "style=\"text-align:right;\"";
             rows = new List<string>();
