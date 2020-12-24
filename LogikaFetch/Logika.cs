@@ -66,7 +66,7 @@ namespace L2M
         {
             if (hashtable.ContainsKey(key))
             {
-                if (DateTime.Now - (DateTime)hashtable[key] > TimeSpan.FromMinutes(2))
+                if (DateTime.Now - (DateTime)hashtable[key] > TimeSpan.FromSeconds(30))
                     hashtable.Remove(key);
                 else
                     return true;
