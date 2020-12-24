@@ -17,7 +17,7 @@ namespace ReportL2M
         {
             var connection = "Data Source=localhost\\SQLEXPRESS;Initial Catalog=GRPAFH;Trusted_Connection=Yes;";
             File.WriteAllText("AFHGRPTR2A.HTM", BuildGrp4Report(1, "Grp4Tr2", "2", connection), Encoding.Default);
-            File.WriteAllText("AFHGRPTR3A.HTM", BuildGrp4Report(1, "Grp4Tr3", "3", connection), Encoding.Default);
+            File.WriteAllText("AFHGRPTR3A.HTM", BuildGrp4Report(2, "Grp4Tr3", "3", connection), Encoding.Default);
         }
 
         private static string BuildGrp4Report(byte node, string table, string tube, string connection)
