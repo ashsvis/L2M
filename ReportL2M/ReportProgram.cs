@@ -15,78 +15,96 @@ namespace ReportL2M
     {
         static void Main(string[] args)
         {
+            var connection = "Data Source=localhost\\SQLEXPRESS;Initial Catalog=GRPAFH;Trusted_Connection=Yes;";
+            File.WriteAllText("AFHGRPTR2A.HTM", BuildGrp4Report(1, "Grp4Tr2", "2", connection), Encoding.Default);
+            File.WriteAllText("AFHGRPTR3A.HTM", BuildGrp4Report(1, "Grp4Tr3", "3", connection), Encoding.Default);
+        }
 
-/*
-            var hour = (int)FetchRegiser(1, 4, 17);
+        private static string BuildGrp4Report(byte node, string table, string tube, string connection)
+        {
+            var hour = (int)FetchRegiser(node, 4, 17);
             if (float.IsNaN(hour))
                 hour = 10;
-            var day = (int)FetchRegiser(1, 4, 19);
+            var day = (int)FetchRegiser(node, 4, 19);
             if (float.IsNaN(day))
                 day = 1;
 
-            var Th = FetchRegiser(1, 4, 101, 24, Period.Hours, day, hour);
-            var Td = FetchRegiser(1, 4, 149, 21, Period.Days, day, hour);
-            var Tm = FetchRegiser(1, 4, 191, 5, Period.Months, day, hour);
-            var Mh = FetchRegiser(1, 4, 201, 24, Period.Hours, day, hour);
-            var Md = FetchRegiser(1, 4, 249, 21, Period.Days, day, hour);
-            var Mm = FetchRegiser(1, 4, 291, 5, Period.Months, day, hour);
-            var Vh = FetchRegiser(1, 4, 301, 24, Period.Hours, day, hour);
-            var Vd = FetchRegiser(1, 4, 349, 21, Period.Days, day, hour);
-            var Vm = FetchRegiser(1, 4, 391, 5, Period.Months, day, hour);
-            var Voh = FetchRegiser(1, 4, 401, 24, Period.Hours, day, hour);
-            var Vod = FetchRegiser(1, 4, 449, 21, Period.Days, day, hour);
-            var Vom = FetchRegiser(1, 4, 491, 5, Period.Months, day, hour);
-            var toh = FetchRegiser(1, 4, 501, 24, Period.Hours, day, hour);
-            var tod = FetchRegiser(1, 4, 549, 21, Period.Days, day, hour);
-            var tom = FetchRegiser(1, 4, 591, 5, Period.Months, day, hour);
-            var Pah = FetchRegiser(1, 4, 601, 24, Period.Hours, day, hour);
-            var Pad = FetchRegiser(1, 4, 649, 21, Period.Days, day, hour);
-            var Pam = FetchRegiser(1, 4, 691, 5, Period.Months, day, hour);
+            var Th = FetchRegiser(node, 4, 101, 24, Period.Hours, day, hour);
+            var Td = FetchRegiser(node, 4, 149, 21, Period.Days, day, hour);
+            var Tm = FetchRegiser(node, 4, 191, 5, Period.Months, day, hour);
+            var Mh = FetchRegiser(node, 4, 201, 24, Period.Hours, day, hour);
+            var Md = FetchRegiser(node, 4, 249, 21, Period.Days, day, hour);
+            var Mm = FetchRegiser(node, 4, 291, 5, Period.Months, day, hour);
+            var Vh = FetchRegiser(node, 4, 301, 24, Period.Hours, day, hour);
+            var Vd = FetchRegiser(node, 4, 349, 21, Period.Days, day, hour);
+            var Vm = FetchRegiser(node, 4, 391, 5, Period.Months, day, hour);
+            var Voh = FetchRegiser(node, 4, 401, 24, Period.Hours, day, hour);
+            var Vod = FetchRegiser(node, 4, 449, 21, Period.Days, day, hour);
+            var Vom = FetchRegiser(node, 4, 491, 5, Period.Months, day, hour);
+            var toh = FetchRegiser(node, 4, 501, 24, Period.Hours, day, hour);
+            var tod = FetchRegiser(node, 4, 549, 21, Period.Days, day, hour);
+            var tom = FetchRegiser(node, 4, 591, 5, Period.Months, day, hour);
+            var Pah = FetchRegiser(node, 4, 601, 24, Period.Hours, day, hour);
+            var Pad = FetchRegiser(node, 4, 649, 21, Period.Days, day, hour);
+            var Pam = FetchRegiser(node, 4, 691, 5, Period.Months, day, hour);
 
-            var server = new SqlServer { Connection = "Data Source=localhost\\SQLEXPRESS;Initial Catalog=GRPAFH;Trusted_Connection=Yes;" };
-            foreach (var o in Th) server.ReplaceInto("Grp4Tr3H", "T", o.Key, o.Value);
-            foreach (var o in Td) server.ReplaceInto("Grp4Tr3D", "T", o.Key, o.Value);
-            foreach (var o in Tm) server.ReplaceInto("Grp4Tr3M", "T", o.Key, o.Value);
-            foreach (var o in Mh) server.ReplaceInto("Grp4Tr3H", "M", o.Key, o.Value);
-            foreach (var o in Md) server.ReplaceInto("Grp4Tr3D", "M", o.Key, o.Value);
-            foreach (var o in Mm) server.ReplaceInto("Grp4Tr3M", "M", o.Key, o.Value);
-            foreach (var o in Vh) server.ReplaceInto("Grp4Tr3H", "V", o.Key, o.Value);
-            foreach (var o in Vd) server.ReplaceInto("Grp4Tr3D", "V", o.Key, o.Value);
-            foreach (var o in Vm) server.ReplaceInto("Grp4Tr3M", "V", o.Key, o.Value);
-            foreach (var o in Voh) server.ReplaceInto("Grp4Tr3H", "Vo", o.Key, o.Value);
-            foreach (var o in Vod) server.ReplaceInto("Grp4Tr3D", "Vo", o.Key, o.Value);
-            foreach (var o in Vom) server.ReplaceInto("Grp4Tr3M", "Vo", o.Key, o.Value);
-            foreach (var o in toh) server.ReplaceInto("Grp4Tr3H", "to", o.Key, o.Value);
-            foreach (var o in tod) server.ReplaceInto("Grp4Tr3D", "to", o.Key, o.Value);
-            foreach (var o in tom) server.ReplaceInto("Grp4Tr3M", "to", o.Key, o.Value);
-            foreach (var o in Pah) server.ReplaceInto("Grp4Tr3H", "Pa", o.Key, o.Value);
-            foreach (var o in Pad) server.ReplaceInto("Grp4Tr3D", "Pa", o.Key, o.Value);
-            foreach (var o in Pam) server.ReplaceInto("Grp4Tr3M", "Pa", o.Key, o.Value);
+            var server = new SqlServer { Connection = connection };
 
+            foreach (var o in Th) server.ReplaceInto($"{table}H", "T", o.Key, o.Value);
+            foreach (var o in Td) server.ReplaceInto($"{table}D", "T", o.Key, o.Value);
+            foreach (var o in Tm) server.ReplaceInto($"{table}M", "T", o.Key, o.Value);
 
-*/
+            foreach (var o in Mh) server.ReplaceInto($"{table}H", "M", o.Key, o.Value);
+            foreach (var o in Md) server.ReplaceInto($"{table}D", "M", o.Key, o.Value);
+            foreach (var o in Mm) server.ReplaceInto($"{table}M", "M", o.Key, o.Value);
+
+            foreach (var o in Vh) server.ReplaceInto($"{table}H", "V", o.Key, o.Value);
+            foreach (var o in Vd) server.ReplaceInto($"{table}D", "V", o.Key, o.Value);
+            foreach (var o in Vm) server.ReplaceInto($"{table}M", "V", o.Key, o.Value);
+
+            foreach (var o in Voh) server.ReplaceInto($"{table}H", "Vo", o.Key, o.Value);
+            foreach (var o in Vod) server.ReplaceInto($"{table}D", "Vo", o.Key, o.Value);
+            foreach (var o in Vom) server.ReplaceInto($"{table}M", "Vo", o.Key, o.Value);
+
+            foreach (var o in toh) server.ReplaceInto($"{table}H", "to", o.Key, o.Value);
+            foreach (var o in tod) server.ReplaceInto($"{table}D", "to", o.Key, o.Value);
+            foreach (var o in tom) server.ReplaceInto($"{table}M", "to", o.Key, o.Value);
+
+            foreach (var o in Pah) server.ReplaceInto($"{table}H", "Pa", o.Key, o.Value);
+            foreach (var o in Pad) server.ReplaceInto($"{table}D", "Pa", o.Key, o.Value);
+            foreach (var o in Pam) server.ReplaceInto($"{table}M", "Pa", o.Key, o.Value);
+
             //=========================
 
             var tmp = Properties.Resources.logikatemplate;
-            tmp = tmp.Replace("##title##", "Поз.FQR-21/3. Архивные данные значений от ГРП-4 в кольцо природного газа от трубопровода №3");
+            tmp = tmp.Replace("##title##", $"Поз.FQR-21/{tube}. Архивные данные значений от ГРП-4 в кольцо природного газа от трубопровода №{tube}");
+            tmp = tmp.Replace("##HeaderHourTable##", PrepareHeaders("h"));
+            tmp = tmp.Replace("##RowsHourTable##", string.Join("\r\n", PrepareRows(server, $"{table}H", 36)));
+            tmp = tmp.Replace("##HeaderDayTable##", PrepareHeaders("d"));
+            tmp = tmp.Replace("##RowsDayTable##", string.Join("\r\n", PrepareRows(server, $"{table}D", 31)));
+            tmp = tmp.Replace("##HeaderMonthTable##", PrepareHeaders("m"));
+            tmp = tmp.Replace("##RowsMonthTable##", string.Join("\r\n", PrepareRows(server, $"{table}M", 5)));
+            return tmp;
+        }
 
+        private static string PrepareHeaders(string kind)
+        {
             var style = "style=\"text-align:left;\" width=\"90\"";
+            return $@"<tr>
+            <td {style}>to{kind}_t1, ч</td>
+            <td {style}>T{kind}_t1, °C</td>
+            <td {style}>M{kind}_t1, кг</td>
+            <td {style}>V{kind}_t1, м3</td>
+            <td {style}>Vo{kind}_t1, м3</td>
+            <td {style}>Pa{kind}_t1, МПа</td>
+            </tr>";
+        }
 
-            tmp = tmp.Replace("##HeaderHourTable##",
-            $@"<tr>
-            <td {style}>Toh_t1, ч</td>
-            <td {style}>Th_t1, °C</td>
-            <td {style}>Mh_t1, кг</td>
-            <td {style}>Vh_t1, м3</td>
-            <td {style}>Voh_t1, м3</td>
-            <td {style}>Pah_t1, МПа</td>
-            </tr>");
-            style = "style=\"text-align:right;\"";
+        private static IEnumerable<string> PrepareRows(SqlServer server, string table, int count)
+        {
+            var style = "style=\"text-align:right;\"";
             var rows = new List<string>();
-
-            var server = new SqlServer { Connection = "Data Source=localhost\\SQLEXPRESS;Initial Catalog=GRPAFH;Trusted_Connection=Yes;" };
-
-            var ds = server.GetRows("Grp4Tr3H", 38);
+            var ds = server.GetRows(table, count);
             if (ds.Tables.Count == 1)
             {
                 foreach (var row in ds.Tables[0].Rows.Cast<DataRow>().Reverse())
@@ -103,78 +121,7 @@ namespace ReportL2M
                     rows.Add(line);
                 }
             }
-
-            tmp = tmp.Replace("##RowsHourTable##", string.Join("\r\n", rows));
-            //--------------------
-            tmp = tmp.Replace("##HeaderDayTable##",
-            $@"<tr>
-            <td {style}>Tod_t1, ч</td>
-            <td {style}>Td_t1, °C</td>
-            <td {style}>Md_t1, кг</td>
-            <td {style}>Vd_t1, м3</td>
-            <td {style}>Vod_t1, м3</td>
-            <td {style}>Pad_t1, МПа</td>
-            </tr>");
-            style = "style=\"text-align:right;\"";
-            rows = new List<string>();
-
-            ds = server.GetRows("Grp4Tr3D", 31);
-            if (ds.Tables.Count == 1)
-            {
-                foreach (var row in ds.Tables[0].Rows.Cast<DataRow>().Reverse())
-                {
-                    var line = $@"<tr>
-                    <td {style}>{row["Snaptime"]:dd.MM.yyyy HH:mm}</td>
-                    <td {style}>{row["to"]:0.00}</td>
-                    <td {style}>{row["T"]:0.00}</td>
-                    <td {style}>{row["M"]:0.00}</td>
-                    <td {style}>{row["V"]:0.00}</td>
-                    <td {style}>{row["Vo"]:0.00}</td>
-                    <td {style}>{row["Pa"]:0.00}</td>
-                    </tr>";
-                    rows.Add(line);
-                }
-            }
-
-            tmp = tmp.Replace("##RowsDayTable##", string.Join("\r\n", rows));
-            //--------------------
-            tmp = tmp.Replace("##HeaderMonthTable##",
-            $@"<tr>
-            <td {style}>Tom_t1, ч</td>
-            <td {style}>Tm_t1, °C</td>
-            <td {style}>Mm_t1, кг</td>
-            <td {style}>Vm_t1, м3</td>
-            <td {style}>Vom_t1, м3</td>
-            <td {style}>Pam_t1, МПа</td>
-            </tr>");
-            style = "style=\"text-align:right;\"";
-            rows = new List<string>();
-
-            ds = server.GetRows("Grp4Tr3M", 5);
-            if (ds.Tables.Count == 1)
-            {
-                foreach (var row in ds.Tables[0].Rows.Cast<DataRow>().Reverse())
-                {
-                    var line = $@"<tr>
-                    <td {style}>{row["Snaptime"]:dd.MM.yyyy HH:mm}</td>
-                    <td {style}>{row["to"]:0.00}</td>
-                    <td {style}>{row["T"]:0.00}</td>
-                    <td {style}>{row["M"]:0.00}</td>
-                    <td {style}>{row["V"]:0.00}</td>
-                    <td {style}>{row["Vo"]:0.00}</td>
-                    <td {style}>{row["Pa"]:0.00}</td>
-                    </tr>";
-                    rows.Add(line);
-                }
-            }
-
-            tmp = tmp.Replace("##RowsMonthTable##", string.Join("\r\n", rows));
-
-            File.WriteAllText("report.htm", tmp, Encoding.Default);
-
-            //Console.WriteLine("Press any key...");
-            //Console.ReadKey();
-
+            return rows;
         }
 
         private static float FetchRegiser(byte node, byte func, ushort addr)
