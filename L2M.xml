@@ -17,12 +17,12 @@
           <Dad>1</Dad>
           <Sad>3</Sad>
           <Node>Grp4Tr3</Node>
+          <ModbusNode>1</ModbusNode>
           <!-- Масса газа нарастающим итогом -->
           <LogikaItem>
             <Tag>M</Tag>
             <Channel>1</Channel>
             <Parameter>160</Parameter>
-            <ModbusNode>1</ModbusNode>
             <InputRegister>0</InputRegister>
             <DataFormat>IEEEFP</DataFormat>
             <AnswerWait>160</AnswerWait>
@@ -32,7 +32,6 @@
             <Tag>T</Tag>
             <Channel>1</Channel>
             <Parameter>156</Parameter>
-            <ModbusNode>1</ModbusNode>
             <InputRegister>2</InputRegister>
             <DataFormat>IEEEFP</DataFormat>
             <AnswerWait>160</AnswerWait>
@@ -42,7 +41,6 @@
             <Tag>V</Tag>
             <Channel>1</Channel>
             <Parameter>162</Parameter>
-            <ModbusNode>1</ModbusNode>
             <InputRegister>4</InputRegister>
             <DataFormat>IEEEFP</DataFormat>
             <AnswerWait>160</AnswerWait>
@@ -52,7 +50,6 @@
             <Tag>Vo</Tag>
             <Channel>1</Channel>
             <Parameter>163</Parameter>
-            <ModbusNode>1</ModbusNode>
             <InputRegister>6</InputRegister>
             <DataFormat>IEEEFP</DataFormat>
             <AnswerWait>160</AnswerWait>
@@ -62,7 +59,6 @@
             <Tag>Pa</Tag>
             <Channel>1</Channel>
             <Parameter>155</Parameter>
-            <ModbusNode>1</ModbusNode>
             <InputRegister>8</InputRegister>
             <DataFormat>IEEEFP</DataFormat>
             <AnswerWait>160</AnswerWait>
@@ -72,7 +68,6 @@
             <Tag>Date</Tag>
             <Channel>0</Channel>
             <Parameter>60</Parameter>
-            <ModbusNode>1</ModbusNode>
             <InputRegister>10</InputRegister>
             <DataFormat>IEEEFP</DataFormat>
             <AnswerWait>160</AnswerWait>
@@ -82,7 +77,6 @@
             <Tag>Time</Tag>
             <Channel>0</Channel>
             <Parameter>61</Parameter>
-            <ModbusNode>1</ModbusNode>
             <InputRegister>12</InputRegister>
             <DataFormat>IEEEFP</DataFormat>
             <AnswerWait>160</AnswerWait>
@@ -92,7 +86,6 @@
             <Tag>Number</Tag>
             <Channel>0</Channel>
             <Parameter>8</Parameter>
-            <ModbusNode>1</ModbusNode>
             <InputRegister>14</InputRegister>
             <DataFormat>IEEEFP</DataFormat>
             <AnswerWait>160</AnswerWait>
@@ -102,7 +95,6 @@
             <Tag>CalcHour</Tag>
             <Channel>0</Channel>
             <Parameter>24</Parameter>
-            <ModbusNode>1</ModbusNode>
             <InputRegister>16</InputRegister>
             <DataFormat>IEEEFP</DataFormat>
             <AnswerWait>160</AnswerWait>
@@ -112,7 +104,6 @@
             <Tag>CalcDay</Tag>
             <Channel>0</Channel>
             <Parameter>25</Parameter>
-            <ModbusNode>1</ModbusNode>
             <InputRegister>18</InputRegister>
             <DataFormat>IEEEFP</DataFormat>
             <AnswerWait>160</AnswerWait>
@@ -123,7 +114,6 @@
             <Channel>1</Channel>
             <ArrayNumber>125</ArrayNumber>
             <IndexNumber>5</IndexNumber>
-            <ModbusNode>1</ModbusNode>
             <HoldingRegister>0</HoldingRegister>
             <DataFormat>IEEEFP</DataFormat>
             <AnswerWait>160</AnswerWait>
@@ -134,7 +124,6 @@
             <Channel>1</Channel>
             <ArrayNumber>125</ArrayNumber>
             <IndexNumber>6</IndexNumber>
-            <ModbusNode>1</ModbusNode>
             <HoldingRegister>2</HoldingRegister>
             <DataFormat>IEEEFP</DataFormat>
             <AnswerWait>160</AnswerWait>
@@ -145,7 +134,6 @@
             <Channel>1</Channel>
             <ArrayNumber>125</ArrayNumber>
             <IndexNumber>8</IndexNumber>
-            <ModbusNode>1</ModbusNode>
             <HoldingRegister>4</HoldingRegister>
             <DataFormat>IEEEFP</DataFormat>
             <AnswerWait>160</AnswerWait>
@@ -157,7 +145,6 @@
             <ArrayNumber>200</ArrayNumber>
             <IndexFirst>1</IndexFirst>
             <ItemsCount>24</ItemsCount>
-            <ModbusNode>1</ModbusNode>
             <InputRegister>100</InputRegister>
             <DataFormat>IEEEFP</DataFormat>
             <AnswerWait>160</AnswerWait>
@@ -169,7 +156,6 @@
             <ArrayNumber>201</ArrayNumber>
             <IndexFirst>1</IndexFirst>
             <ItemsCount>21</ItemsCount>
-            <ModbusNode>1</ModbusNode>
             <InputRegister>148</InputRegister>
             <DataFormat>IEEEFP</DataFormat>
             <AnswerWait>160</AnswerWait>
@@ -181,7 +167,6 @@
             <ArrayNumber>202</ArrayNumber>
             <IndexFirst>1</IndexFirst>
             <ItemsCount>5</ItemsCount>
-            <ModbusNode>1</ModbusNode>
             <InputRegister>190</InputRegister>
             <DataFormat>IEEEFP</DataFormat>
             <AnswerWait>160</AnswerWait>
@@ -193,7 +178,6 @@
             <ArrayNumber>210</ArrayNumber>
             <IndexFirst>1</IndexFirst>
             <ItemsCount>24</ItemsCount>
-            <ModbusNode>1</ModbusNode>
             <InputRegister>200</InputRegister>
             <DataFormat>IEEEFP</DataFormat>
             <AnswerWait>160</AnswerWait>
@@ -205,7 +189,6 @@
             <ArrayNumber>211</ArrayNumber>
             <IndexFirst>1</IndexFirst>
             <ItemsCount>21</ItemsCount>
-            <ModbusNode>1</ModbusNode>
             <InputRegister>248</InputRegister>
             <DataFormat>IEEEFP</DataFormat>
             <AnswerWait>160</AnswerWait>
@@ -217,7 +200,6 @@
             <ArrayNumber>212</ArrayNumber>
             <IndexFirst>1</IndexFirst>
             <ItemsCount>5</ItemsCount>
-            <ModbusNode>1</ModbusNode>
             <InputRegister>290</InputRegister>
             <DataFormat>IEEEFP</DataFormat>
             <AnswerWait>160</AnswerWait>
@@ -229,7 +211,6 @@
             <ArrayNumber>215</ArrayNumber>
             <IndexFirst>1</IndexFirst>
             <ItemsCount>24</ItemsCount>
-            <ModbusNode>1</ModbusNode>
             <InputRegister>300</InputRegister>
             <DataFormat>IEEEFP</DataFormat>
             <AnswerWait>160</AnswerWait>
@@ -241,7 +222,6 @@
             <ArrayNumber>216</ArrayNumber>
             <IndexFirst>1</IndexFirst>
             <ItemsCount>21</ItemsCount>
-            <ModbusNode>1</ModbusNode>
             <InputRegister>348</InputRegister>
             <DataFormat>IEEEFP</DataFormat>
             <AnswerWait>160</AnswerWait>
@@ -253,7 +233,6 @@
             <ArrayNumber>217</ArrayNumber>
             <IndexFirst>1</IndexFirst>
             <ItemsCount>5</ItemsCount>
-            <ModbusNode>1</ModbusNode>
             <InputRegister>390</InputRegister>
             <DataFormat>IEEEFP</DataFormat>
             <AnswerWait>160</AnswerWait>
@@ -265,7 +244,6 @@
             <ArrayNumber>220</ArrayNumber>
             <IndexFirst>1</IndexFirst>
             <ItemsCount>24</ItemsCount>
-            <ModbusNode>1</ModbusNode>
             <InputRegister>400</InputRegister>
             <DataFormat>IEEEFP</DataFormat>
             <AnswerWait>160</AnswerWait>
@@ -277,7 +255,6 @@
             <ArrayNumber>221</ArrayNumber>
             <IndexFirst>1</IndexFirst>
             <ItemsCount>21</ItemsCount>
-            <ModbusNode>1</ModbusNode>
             <InputRegister>448</InputRegister>
             <DataFormat>IEEEFP</DataFormat>
             <AnswerWait>160</AnswerWait>
@@ -289,7 +266,6 @@
             <ArrayNumber>222</ArrayNumber>
             <IndexFirst>1</IndexFirst>
             <ItemsCount>5</ItemsCount>
-            <ModbusNode>1</ModbusNode>
             <InputRegister>490</InputRegister>
             <DataFormat>IEEEFP</DataFormat>
             <AnswerWait>160</AnswerWait>
@@ -301,7 +277,6 @@
             <ArrayNumber>234</ArrayNumber>
             <IndexFirst>1</IndexFirst>
             <ItemsCount>24</ItemsCount>
-            <ModbusNode>1</ModbusNode>
             <InputRegister>500</InputRegister>
             <DataFormat>IEEEFP</DataFormat>
             <AnswerWait>160</AnswerWait>
@@ -313,7 +288,6 @@
             <ArrayNumber>235</ArrayNumber>
             <IndexFirst>1</IndexFirst>
             <ItemsCount>21</ItemsCount>
-            <ModbusNode>1</ModbusNode>
             <InputRegister>548</InputRegister>
             <DataFormat>IEEEFP</DataFormat>
             <AnswerWait>160</AnswerWait>
@@ -325,7 +299,6 @@
             <ArrayNumber>236</ArrayNumber>
             <IndexFirst>1</IndexFirst>
             <ItemsCount>5</ItemsCount>
-            <ModbusNode>1</ModbusNode>
             <InputRegister>590</InputRegister>
             <DataFormat>IEEEFP</DataFormat>
             <AnswerWait>160</AnswerWait>
@@ -337,7 +310,6 @@
             <ArrayNumber>205</ArrayNumber>
             <IndexFirst>1</IndexFirst>
             <ItemsCount>24</ItemsCount>
-            <ModbusNode>1</ModbusNode>
             <InputRegister>600</InputRegister>
             <DataFormat>IEEEFP</DataFormat>
             <AnswerWait>160</AnswerWait>
@@ -349,7 +321,6 @@
             <ArrayNumber>206</ArrayNumber>
             <IndexFirst>1</IndexFirst>
             <ItemsCount>21</ItemsCount>
-            <ModbusNode>1</ModbusNode>
             <InputRegister>648</InputRegister>
             <DataFormat>IEEEFP</DataFormat>
             <AnswerWait>160</AnswerWait>
@@ -361,7 +332,6 @@
             <ArrayNumber>207</ArrayNumber>
             <IndexFirst>1</IndexFirst>
             <ItemsCount>5</ItemsCount>
-            <ModbusNode>1</ModbusNode>
             <InputRegister>690</InputRegister>
             <DataFormat>IEEEFP</DataFormat>
             <AnswerWait>160</AnswerWait>

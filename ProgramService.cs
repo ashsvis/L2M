@@ -28,7 +28,7 @@ namespace L2M
                 var xdoc = XDocument.Load(configName);
                 XElement listenTcp = xdoc.Element("Config").Element("ListenTcp");
                 ReadConfigParameters(listenTcp, out IPAddress ipAddress, out int ipPort, out int sendTimeout, out int receiveTimeout);
-                // запуск потока для прослушивания запосов от устройства по протоколу Modbus Tcp
+                // запуск потока для прослушивания запросов от устройства по протоколу Modbus Tcp
                 var listener = new BackgroundWorker { WorkerSupportsCancellation = true, WorkerReportsProgress = true };
                 listener.DoWork += ModbusListener_DoWork;
                 listener.ProgressChanged += ModbusListener_ProgressChanged;
@@ -154,99 +154,100 @@ namespace L2M
             ushort startAddr = 0;
             string dataFormat = "", node = "Logika", tag = "*";
             bool good = true;
-            var logikaNodeElement = parentElement.Element("Runtime").Element("LogikaNode");
-            var element = logikaNodeElement.Element("Dad");
-            if (element == null || !byte.TryParse(element.Value, out dad))
-                good = false;
-            element = logikaNodeElement.Element("Sad");
-            if (element == null || !byte.TryParse(element.Value, out sad))
-                good = false;
-            element = logikaNodeElement.Element("Node");
-            if (element != null)
-                node = element.Value;
-            else
-                good = false;
-            foreach (var item in logikaNodeElement.Elements("LogikaItem"))
+            foreach (XElement logikaNodeElement in parentElement.Element("Runtime").Elements("LogikaNode"))
             {
-                element = item.Element("Tag");
+                var element = logikaNodeElement.Element("Dad");
+                if (element == null || !byte.TryParse(element.Value, out dad))
+                    good = false;
+                element = logikaNodeElement.Element("Sad");
+                if (element == null || !byte.TryParse(element.Value, out sad))
+                    good = false;
+                element = logikaNodeElement.Element("Node");
                 if (element != null)
-                    tag = element.Value;
+                    node = element.Value;
                 else
                     good = false;
-                element = item.Element("Channel");
-                if (element == null || !int.TryParse(element.Value, out channel))
-                    good = false;
-                element = item.Element("Parameter");
-                if (element != null)
-                {
-                    paramKind = LogikaParam.Parameter;
-                    if (!int.TryParse(element.Value, out parameter))
-                        good = false;
-                }
-                else
-                {
-                    element = item.Element("ArrayNumber");
-                    if (element != null)
-                    {
-                        paramKind = LogikaParam.IndexArray;
-                        if (!int.TryParse(element.Value, out parameter))
-                            good = false;
-                        element = item.Element("IndexNumber");
-                        if (element == null || !int.TryParse(element.Value, out arrayIndexNumber))
-                            good = false;
-
-                    }
-                    else
-                        good = false;
-                }
-                element = item.Element("ModbusNode");
+                element = logikaNodeElement.Element("ModbusNode");
                 if (element == null || !byte.TryParse(element.Value, out nodeAddr))
                     good = false;
-                element = item.Element("DataFormat");
-                if (element != null)
-                    dataFormat = element.Value;
-                else
-                    good = false;
-                element = item.Element("AnswerWait");
-                if (element == null || !int.TryParse(element.Value, out answerWait))
-                    good = false;
-                element = item.Element("InputRegister");
-                if (element != null)
+                foreach (var item in logikaNodeElement.Elements("LogikaItem"))
                 {
-                    modbusTable = ModbusTable.Inputs;
-                    if (!ushort.TryParse(element.Value, out startAddr))
+                    element = item.Element("Tag");
+                    if (element != null)
+                        tag = element.Value;
+                    else
                         good = false;
-                }
-                else
-                {
-                    element = item.Element("HoldingRegister");
+                    element = item.Element("Channel");
+                    if (element == null || !int.TryParse(element.Value, out channel))
+                        good = false;
+                    element = item.Element("Parameter");
                     if (element != null)
                     {
-                        modbusTable = ModbusTable.Holdings;
+                        paramKind = LogikaParam.Parameter;
+                        if (!int.TryParse(element.Value, out parameter))
+                            good = false;
+                    }
+                    else
+                    {
+                        element = item.Element("ArrayNumber");
+                        if (element != null)
+                        {
+                            paramKind = LogikaParam.IndexArray;
+                            if (!int.TryParse(element.Value, out parameter))
+                                good = false;
+                            element = item.Element("IndexNumber");
+                            if (element == null || !int.TryParse(element.Value, out arrayIndexNumber))
+                                good = false;
+                        }
+                        else
+                            good = false;
+                    }
+                    element = item.Element("DataFormat");
+                    if (element != null)
+                        dataFormat = element.Value;
+                    else
+                        good = false;
+                    element = item.Element("AnswerWait");
+                    if (element == null || !int.TryParse(element.Value, out answerWait))
+                        good = false;
+                    element = item.Element("InputRegister");
+                    if (element != null)
+                    {
+                        modbusTable = ModbusTable.Inputs;
                         if (!ushort.TryParse(element.Value, out startAddr))
                             good = false;
                     }
                     else
-                        good = false;
-                }
-                if (good)
-                {
-                    parameters.Add(new RequestData()
                     {
-                        Node = node,
-                        Tag = tag,
-                        Dad = dad,
-                        Sad = sad,
-                        Channel = channel,
-                        ParameterKind = paramKind,
-                        Parameter = parameter,
-                        ArrayIndexNumber = arrayIndexNumber,
-                        NodeAddr = nodeAddr,
-                        StartAddr = startAddr,
-                        ModbusTable = modbusTable,
-                        FormatData = dataFormat,
-                        AnswerWait = answerWait
-                    });
+                        element = item.Element("HoldingRegister");
+                        if (element != null)
+                        {
+                            modbusTable = ModbusTable.Holdings;
+                            if (!ushort.TryParse(element.Value, out startAddr))
+                                good = false;
+                        }
+                        else
+                            good = false;
+                    }
+                    if (good)
+                    {
+                        parameters.Add(new RequestData()
+                        {
+                            Node = node,
+                            Tag = tag,
+                            Dad = dad,
+                            Sad = sad,
+                            Channel = channel,
+                            ParameterKind = paramKind,
+                            Parameter = parameter,
+                            ArrayIndexNumber = arrayIndexNumber,
+                            NodeAddr = nodeAddr,
+                            StartAddr = startAddr,
+                            ModbusTable = modbusTable,
+                            FormatData = dataFormat,
+                            AnswerWait = answerWait
+                        });
+                    }
                 }
             }
         }
@@ -260,106 +261,108 @@ namespace L2M
             ushort startAddr = 0;
             string dataFormat = "", node = "Logika", tag = "*";
             bool good = true;
-            var logikaNodeElement = parentElement.Element("Runtime").Element("LogikaNode");
-            var element = logikaNodeElement.Element("Dad");
-            if (element == null || !byte.TryParse(element.Value, out dad))
-                good = false;
-            element = logikaNodeElement.Element("Sad");
-            if (element == null || !byte.TryParse(element.Value, out sad))
-                good = false;
-            element = logikaNodeElement.Element("Node");
-            if (element != null)
-                node = element.Value;
-            else
-                good = false;
-            foreach (var item in logikaNodeElement.Elements("LogikaIndexArray"))
+            foreach (XElement logikaNodeElement in parentElement.Element("Runtime").Elements("LogikaNode"))
             {
-                element = item.Element("Tag");
+                var element = logikaNodeElement.Element("Dad");
+                if (element == null || !byte.TryParse(element.Value, out dad))
+                    good = false;
+                element = logikaNodeElement.Element("Sad");
+                if (element == null || !byte.TryParse(element.Value, out sad))
+                    good = false;
+                element = logikaNodeElement.Element("Node");
                 if (element != null)
-                    tag = element.Value;
+                    node = element.Value;
                 else
                     good = false;
-                element = item.Element("Channel");
-                if (element == null || !int.TryParse(element.Value, out channel))
-                    good = false;
-                element = item.Element("Parameter");
-                if (element != null)
-                {
-                    paramKind = LogikaParam.Parameter;
-                    if (!int.TryParse(element.Value, out parameter))
-                        good = false;
-                }
-                else
-                {
-                    element = item.Element("ArrayNumber");
-                    if (element != null)
-                    {
-                        paramKind = LogikaParam.IndexArray;
-                        if (!int.TryParse(element.Value, out parameter))
-                            good = false;
-                        element = item.Element("IndexFirst");
-                        if (element == null || !int.TryParse(element.Value, out arrayFirstIndex))
-                            good = false;
-                        element = item.Element("ItemsCount");
-                        if (element == null || !int.TryParse(element.Value, out arrayItemsCount))
-                            good = false;
-
-                    }
-                    else
-                        good = false;
-                }
-                element = item.Element("ModbusNode");
+                element = logikaNodeElement.Element("ModbusNode");
                 if (element == null || !byte.TryParse(element.Value, out nodeAddr))
                     good = false;
-                element = item.Element("DataFormat");
-                if (element != null)
-                    dataFormat = element.Value;
-                else
-                    good = false;
-                element = item.Element("AnswerWait");
-                if (element == null || !int.TryParse(element.Value, out answerWait))
-                    good = false;
-                element = item.Element("InputRegister");
-                if (element != null)
+                foreach (var item in logikaNodeElement.Elements("LogikaIndexArray"))
                 {
-                    modbusTable = ModbusTable.Inputs;
-                    if (!ushort.TryParse(element.Value, out startAddr))
+                    element = item.Element("Tag");
+                    if (element != null)
+                        tag = element.Value;
+                    else
                         good = false;
-                }
-                else
-                {
-                    element = item.Element("HoldingRegister");
+                    element = item.Element("Channel");
+                    if (element == null || !int.TryParse(element.Value, out channel))
+                        good = false;
+                    element = item.Element("Parameter");
                     if (element != null)
                     {
-                        modbusTable = ModbusTable.Holdings;
+                        paramKind = LogikaParam.Parameter;
+                        if (!int.TryParse(element.Value, out parameter))
+                            good = false;
+                    }
+                    else
+                    {
+                        element = item.Element("ArrayNumber");
+                        if (element != null)
+                        {
+                            paramKind = LogikaParam.IndexArray;
+                            if (!int.TryParse(element.Value, out parameter))
+                                good = false;
+                            element = item.Element("IndexFirst");
+                            if (element == null || !int.TryParse(element.Value, out arrayFirstIndex))
+                                good = false;
+                            element = item.Element("ItemsCount");
+                            if (element == null || !int.TryParse(element.Value, out arrayItemsCount))
+                                good = false;
+
+                        }
+                        else
+                            good = false;
+                    }
+                    element = item.Element("DataFormat");
+                    if (element != null)
+                        dataFormat = element.Value;
+                    else
+                        good = false;
+                    element = item.Element("AnswerWait");
+                    if (element == null || !int.TryParse(element.Value, out answerWait))
+                        good = false;
+                    element = item.Element("InputRegister");
+                    if (element != null)
+                    {
+                        modbusTable = ModbusTable.Inputs;
                         if (!ushort.TryParse(element.Value, out startAddr))
                             good = false;
                     }
                     else
-                        good = false;
-                }
-                if (good)
-                {
-                    for (var i = 0; i < arrayItemsCount; i++)
                     {
-                        parameters.Add(new RequestData()
+                        element = item.Element("HoldingRegister");
+                        if (element != null)
                         {
-                            Node = node,
-                            Tag = tag,
-                            Dad = dad,
-                            Sad = sad,
-                            Channel = channel,
-                            ParameterKind = paramKind,
-                            Parameter = parameter,
-                            ArrayIndexNumber = arrayFirstIndex + i,
-                            Archived = arrayFirstIndex + i > 0,
-                            NodeAddr = nodeAddr,
-                            StartAddr = startAddr,
-                            ModbusTable = modbusTable,
-                            FormatData = dataFormat,
-                            AnswerWait = answerWait
-                        });
-                        startAddr += 2;
+                            modbusTable = ModbusTable.Holdings;
+                            if (!ushort.TryParse(element.Value, out startAddr))
+                                good = false;
+                        }
+                        else
+                            good = false;
+                    }
+                    if (good)
+                    {
+                        for (var i = 0; i < arrayItemsCount; i++)
+                        {
+                            parameters.Add(new RequestData()
+                            {
+                                Node = node,
+                                Tag = tag,
+                                Dad = dad,
+                                Sad = sad,
+                                Channel = channel,
+                                ParameterKind = paramKind,
+                                Parameter = parameter,
+                                ArrayIndexNumber = arrayFirstIndex + i,
+                                Archived = arrayFirstIndex + i > 0,
+                                NodeAddr = nodeAddr,
+                                StartAddr = startAddr,
+                                ModbusTable = modbusTable,
+                                FormatData = dataFormat,
+                                AnswerWait = answerWait
+                            });
+                            startAddr += 2;
+                        }
                     }
                 }
             }
