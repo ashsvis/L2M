@@ -76,6 +76,11 @@ namespace ReportL2M
 
             //=========================
 
+            server.CalculateFrom($"{table}H", "dd.MM.yyyy", $"Plant{table}D");
+            server.CalculateFrom($"Plant{table}D", "01.MM.yyyy", $"Plant{table}M");
+
+            //=========================
+
             var tmp = Properties.Resources.logikatemplate;
             tmp = tmp.Replace("##title##", $"Поз.FQR-21/{tube}. Архивные данные значений от ГРП-4 в кольцо природного газа от трубопровода №{tube}");
             tmp = tmp.Replace("##HeaderHourTable##", PrepareHeaders("h"));
