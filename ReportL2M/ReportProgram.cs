@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -12,9 +13,10 @@ namespace ReportL2M
 {
     class ReportProgram
     {
-
         static void Main(string[] args)
         {
+
+/*
             var hour = (int)FetchRegiser(1, 4, 17);
             if (float.IsNaN(hour))
                 hour = 10;
@@ -61,7 +63,9 @@ namespace ReportL2M
             foreach (var o in Pad) server.ReplaceInto("Grp4Tr3D", "Pa", o.Key, o.Value);
             foreach (var o in Pam) server.ReplaceInto("Grp4Tr3M", "Pa", o.Key, o.Value);
 
-            /*
+
+*/
+            //=========================
 
             var tmp = Properties.Resources.logikatemplate;
             tmp = tmp.Replace("##title##", "Поз.FQR-21/3. Архивные данные значений от ГРП-4 в кольцо природного газа от трубопровода №3");
@@ -77,26 +81,32 @@ namespace ReportL2M
             <td {style}>Voh_t1, м3</td>
             <td {style}>Pah_t1, МПа</td>
             </tr>");
-                        style = "style=\"text-align:right;\"";
-                        var rows = new List<string>();
+            style = "style=\"text-align:right;\"";
+            var rows = new List<string>();
 
-                        foreach (var to in toh)
-                        {
-                            var row = $@"<tr>
-            <td {style}>{to.Key:dd.MM.yyyy HH:mm}</td>
-            <td {style}>{to.Value:0.00}</td>
-            <td {style}>{Th[to.Key]:0.00}</td>
-            <td {style}>{Mh[to.Key]:0.00}</td>
-            <td {style}>{Vh[to.Key]:0.00}</td>
-            <td {style}>{Voh[to.Key]:0.00}</td>
-            <td {style}>{Pah[to.Key]:0.00}</td>
-            </tr>";
-                            rows.Add(row);
-                        }
+            var server = new SqlServer { Connection = "Data Source=localhost\\SQLEXPRESS;Initial Catalog=GRPAFH;Trusted_Connection=Yes;" };
 
-                        tmp = tmp.Replace("##RowsHourTable##", string.Join("\r\n", rows));
+            var ds = server.GetRows("Grp4Tr3H", 38);
+            if (ds.Tables.Count == 1)
+            {
+                foreach (var row in ds.Tables[0].Rows.Cast<DataRow>().Reverse())
+                {
+                    var line = $@"<tr>
+                    <td {style}>{row["Snaptime"]:dd.MM.yyyy HH:mm}</td>
+                    <td {style}>{row["to"]:0.00}</td>
+                    <td {style}>{row["T"]:0.00}</td>
+                    <td {style}>{row["M"]:0.00}</td>
+                    <td {style}>{row["V"]:0.00}</td>
+                    <td {style}>{row["Vo"]:0.00}</td>
+                    <td {style}>{row["Pa"]:0.00}</td>
+                    </tr>";
+                    rows.Add(line);
+                }
+            }
+
+            tmp = tmp.Replace("##RowsHourTable##", string.Join("\r\n", rows));
             //--------------------
-                        tmp = tmp.Replace("##HeaderDayTable##",
+            tmp = tmp.Replace("##HeaderDayTable##",
             $@"<tr>
             <td {style}>Tod_t1, ч</td>
             <td {style}>Td_t1, °C</td>
@@ -105,26 +115,30 @@ namespace ReportL2M
             <td {style}>Vod_t1, м3</td>
             <td {style}>Pad_t1, МПа</td>
             </tr>");
-                        style = "style=\"text-align:right;\"";
-                        rows = new List<string>();
+            style = "style=\"text-align:right;\"";
+            rows = new List<string>();
 
-                        foreach (var to in tod)
-                        {
-                            var row = $@"<tr>
-            <td {style}>{to.Key:dd.MM.yyyy HH:mm}</td>
-            <td {style}>{to.Value:0.00}</td>
-            <td {style}>{Td[to.Key]:0.00}</td>
-            <td {style}>{Md[to.Key]:0.00}</td>
-            <td {style}>{Vd[to.Key]:0.00}</td>
-            <td {style}>{Vod[to.Key]:0.00}</td>
-            <td {style}>{Pad[to.Key]:0.00}</td>
-            </tr>";
-                            rows.Add(row);
-                        }
+            ds = server.GetRows("Grp4Tr3D", 31);
+            if (ds.Tables.Count == 1)
+            {
+                foreach (var row in ds.Tables[0].Rows.Cast<DataRow>().Reverse())
+                {
+                    var line = $@"<tr>
+                    <td {style}>{row["Snaptime"]:dd.MM.yyyy HH:mm}</td>
+                    <td {style}>{row["to"]:0.00}</td>
+                    <td {style}>{row["T"]:0.00}</td>
+                    <td {style}>{row["M"]:0.00}</td>
+                    <td {style}>{row["V"]:0.00}</td>
+                    <td {style}>{row["Vo"]:0.00}</td>
+                    <td {style}>{row["Pa"]:0.00}</td>
+                    </tr>";
+                    rows.Add(line);
+                }
+            }
 
-                        tmp = tmp.Replace("##RowsDayTable##", string.Join("\r\n", rows));
+            tmp = tmp.Replace("##RowsDayTable##", string.Join("\r\n", rows));
             //--------------------
-                        tmp = tmp.Replace("##HeaderMonthTable##",
+            tmp = tmp.Replace("##HeaderMonthTable##",
             $@"<tr>
             <td {style}>Tom_t1, ч</td>
             <td {style}>Tm_t1, °C</td>
@@ -133,31 +147,33 @@ namespace ReportL2M
             <td {style}>Vom_t1, м3</td>
             <td {style}>Pam_t1, МПа</td>
             </tr>");
-                        style = "style=\"text-align:right;\"";
-                        rows = new List<string>();
+            style = "style=\"text-align:right;\"";
+            rows = new List<string>();
 
-                        foreach (var to in tom)
-                        {
-                            var row = $@"<tr>
-            <td {style}>{to.Key:dd.MM.yyyy HH:mm}</td>
-            <td {style}>{to.Value:0.00}</td>
-            <td {style}>{Tm[to.Key]:0.00}</td>
-            <td {style}>{Mm[to.Key]:0.00}</td>
-            <td {style}>{Vm[to.Key]:0.00}</td>
-            <td {style}>{Vom[to.Key]:0.00}</td>
-            <td {style}>{Pam[to.Key]:0.00}</td>
-            </tr>";
-                            rows.Add(row);
-                        }
+            ds = server.GetRows("Grp4Tr3M", 5);
+            if (ds.Tables.Count == 1)
+            {
+                foreach (var row in ds.Tables[0].Rows.Cast<DataRow>().Reverse())
+                {
+                    var line = $@"<tr>
+                    <td {style}>{row["Snaptime"]:dd.MM.yyyy HH:mm}</td>
+                    <td {style}>{row["to"]:0.00}</td>
+                    <td {style}>{row["T"]:0.00}</td>
+                    <td {style}>{row["M"]:0.00}</td>
+                    <td {style}>{row["V"]:0.00}</td>
+                    <td {style}>{row["Vo"]:0.00}</td>
+                    <td {style}>{row["Pa"]:0.00}</td>
+                    </tr>";
+                    rows.Add(line);
+                }
+            }
 
-                        tmp = tmp.Replace("##RowsMonthTable##", string.Join("\r\n", rows));
+            tmp = tmp.Replace("##RowsMonthTable##", string.Join("\r\n", rows));
 
-                        File.WriteAllText("report.htm", tmp, Encoding.Default);
+            File.WriteAllText("report.htm", tmp, Encoding.Default);
 
-                        //Console.WriteLine("Press any key...");
-                        //Console.ReadKey();
-
-            */
+            //Console.WriteLine("Press any key...");
+            //Console.ReadKey();
 
         }
 

@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+//using System.Collections.Generic;
+//using System.Linq;
 using System.Data;
 using System.Data.SqlClient;
 
@@ -14,6 +14,7 @@ namespace ReportL2M
         public string Connection { get; set; } = string.Empty; // строка подключения
         public string LastError { get; set; } = string.Empty; // последняя ошибка
 
+/*
         public bool RecordExists(string table, string tagname, DateTime snaptime)
         {
             using (var con = new SqlConnection(Connection))
@@ -142,7 +143,7 @@ namespace ReportL2M
                 }
             }
         }
-
+*/
         public bool ReplaceInto(string table, string field, DateTime time, float value)
         {
             using (var con = new SqlConnection(Connection))
@@ -177,6 +178,7 @@ namespace ReportL2M
             }
         }
 
+/*
         public bool ReplaceInto(string table, Dictionary<string, object> columns)
         {
             using (var con = new SqlConnection(Connection))
@@ -336,7 +338,7 @@ namespace ReportL2M
                 }
             }
         }
-
+*/
         /// <summary>
         /// Получение набора данных из таблицы
         /// </summary>
@@ -349,6 +351,28 @@ namespace ReportL2M
             using (var con = new SqlConnection(Connection))
             {
                 var sql = BuildQuery(table, likefield, text2find);
+                using (var da = new SqlDataAdapter(sql, con))
+                {
+                    var ds = new DataSet();
+                    try
+                    {
+                        da.Fill(ds, table);
+                        LastError = "";
+                    }
+                    catch (Exception ex)
+                    {
+                        LastError = ex.Message;
+                    }
+                    return ds;
+                }
+            }
+        }
+
+        public DataSet GetRows(string table, int count)
+        {
+            using (var con = new SqlConnection(Connection))
+            {
+                var sql = $"SELECT TOP {count} * FROM [{table}] ORDER BY [Snaptime] DESC";
                 using (var da = new SqlDataAdapter(sql, con))
                 {
                     var ds = new DataSet();
