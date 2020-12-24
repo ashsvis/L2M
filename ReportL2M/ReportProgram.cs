@@ -21,12 +21,13 @@ namespace ReportL2M
             var day = (int)FetchRegiser(1, 4, 19);
             if (float.IsNaN(day))
                 day = 1;
+
             var Th = FetchRegiser(1, 4, 101, 24, Period.Hours, day, hour);
             var Td = FetchRegiser(1, 4, 149, 21, Period.Days, day, hour);
             var Tm = FetchRegiser(1, 4, 191, 5, Period.Months, day, hour);
             var Mh = FetchRegiser(1, 4, 201, 24, Period.Hours, day, hour);
             var Md = FetchRegiser(1, 4, 249, 21, Period.Days, day, hour);
-            var Mm= FetchRegiser(1, 4, 291, 5, Period.Months, day, hour);
+            var Mm = FetchRegiser(1, 4, 291, 5, Period.Months, day, hour);
             var Vh = FetchRegiser(1, 4, 301, 24, Period.Hours, day, hour);
             var Vd = FetchRegiser(1, 4, 349, 21, Period.Days, day, hour);
             var Vm = FetchRegiser(1, 4, 391, 5, Period.Months, day, hour);
@@ -40,99 +41,124 @@ namespace ReportL2M
             var Pad = FetchRegiser(1, 4, 649, 21, Period.Days, day, hour);
             var Pam = FetchRegiser(1, 4, 691, 5, Period.Months, day, hour);
 
+            var server = new SqlServer { Connection = "Data Source=localhost\\SQLEXPRESS;Initial Catalog=GRPAFH;Trusted_Connection=Yes;" };
+            foreach (var o in Th) server.ReplaceInto("Grp4Tr3H", "T", o.Key, o.Value);
+            foreach (var o in Td) server.ReplaceInto("Grp4Tr3D", "T", o.Key, o.Value);
+            foreach (var o in Tm) server.ReplaceInto("Grp4Tr3M", "T", o.Key, o.Value);
+            foreach (var o in Mh) server.ReplaceInto("Grp4Tr3H", "M", o.Key, o.Value);
+            foreach (var o in Md) server.ReplaceInto("Grp4Tr3D", "M", o.Key, o.Value);
+            foreach (var o in Mm) server.ReplaceInto("Grp4Tr3M", "M", o.Key, o.Value);
+            foreach (var o in Vh) server.ReplaceInto("Grp4Tr3H", "V", o.Key, o.Value);
+            foreach (var o in Vd) server.ReplaceInto("Grp4Tr3D", "V", o.Key, o.Value);
+            foreach (var o in Vm) server.ReplaceInto("Grp4Tr3M", "V", o.Key, o.Value);
+            foreach (var o in Voh) server.ReplaceInto("Grp4Tr3H", "Vo", o.Key, o.Value);
+            foreach (var o in Vod) server.ReplaceInto("Grp4Tr3D", "Vo", o.Key, o.Value);
+            foreach (var o in Vom) server.ReplaceInto("Grp4Tr3M", "Vo", o.Key, o.Value);
+            foreach (var o in toh) server.ReplaceInto("Grp4Tr3H", "to", o.Key, o.Value);
+            foreach (var o in tod) server.ReplaceInto("Grp4Tr3D", "to", o.Key, o.Value);
+            foreach (var o in tom) server.ReplaceInto("Grp4Tr3M", "to", o.Key, o.Value);
+            foreach (var o in Pah) server.ReplaceInto("Grp4Tr3H", "Pa", o.Key, o.Value);
+            foreach (var o in Pad) server.ReplaceInto("Grp4Tr3D", "Pa", o.Key, o.Value);
+            foreach (var o in Pam) server.ReplaceInto("Grp4Tr3M", "Pa", o.Key, o.Value);
+
+            /*
+
             var tmp = Properties.Resources.logikatemplate;
             tmp = tmp.Replace("##title##", "Поз.FQR-21/3. Архивные данные значений от ГРП-4 в кольцо природного газа от трубопровода №3");
 
             var style = "style=\"text-align:left;\" width=\"90\"";
 
             tmp = tmp.Replace("##HeaderHourTable##",
-$@"<tr>
-<td {style}>Toh_t1, ч</td>
-<td {style}>Th_t1, °C</td>
-<td {style}>Mh_t1, кг</td>
-<td {style}>Vh_t1, м3</td>
-<td {style}>Voh_t1, м3</td>
-<td {style}>Pah_t1, МПа</td>
-</tr>");
-            style = "style=\"text-align:right;\"";
-            var rows = new List<string>();
+            $@"<tr>
+            <td {style}>Toh_t1, ч</td>
+            <td {style}>Th_t1, °C</td>
+            <td {style}>Mh_t1, кг</td>
+            <td {style}>Vh_t1, м3</td>
+            <td {style}>Voh_t1, м3</td>
+            <td {style}>Pah_t1, МПа</td>
+            </tr>");
+                        style = "style=\"text-align:right;\"";
+                        var rows = new List<string>();
 
-            foreach (var to in toh)
-            {
-                var row = $@"<tr>
-<td {style}>{to.Key:dd.MM.yyyy HH:mm}</td>
-<td {style}>{to.Value:0.00}</td>
-<td {style}>{Th[to.Key]:0.00}</td>
-<td {style}>{Mh[to.Key]:0.00}</td>
-<td {style}>{Vh[to.Key]:0.00}</td>
-<td {style}>{Voh[to.Key]:0.00}</td>
-<td {style}>{Pah[to.Key]:0.00}</td>
-</tr>";
-                rows.Add(row);
-            }
+                        foreach (var to in toh)
+                        {
+                            var row = $@"<tr>
+            <td {style}>{to.Key:dd.MM.yyyy HH:mm}</td>
+            <td {style}>{to.Value:0.00}</td>
+            <td {style}>{Th[to.Key]:0.00}</td>
+            <td {style}>{Mh[to.Key]:0.00}</td>
+            <td {style}>{Vh[to.Key]:0.00}</td>
+            <td {style}>{Voh[to.Key]:0.00}</td>
+            <td {style}>{Pah[to.Key]:0.00}</td>
+            </tr>";
+                            rows.Add(row);
+                        }
 
-            tmp = tmp.Replace("##RowsHourTable##", string.Join("\r\n", rows));
-//--------------------
-            tmp = tmp.Replace("##HeaderDayTable##",
-$@"<tr>
-<td {style}>Tod_t1, ч</td>
-<td {style}>Td_t1, °C</td>
-<td {style}>Md_t1, кг</td>
-<td {style}>Vd_t1, м3</td>
-<td {style}>Vod_t1, м3</td>
-<td {style}>Pad_t1, МПа</td>
-</tr>");
-            style = "style=\"text-align:right;\"";
-            rows = new List<string>();
+                        tmp = tmp.Replace("##RowsHourTable##", string.Join("\r\n", rows));
+            //--------------------
+                        tmp = tmp.Replace("##HeaderDayTable##",
+            $@"<tr>
+            <td {style}>Tod_t1, ч</td>
+            <td {style}>Td_t1, °C</td>
+            <td {style}>Md_t1, кг</td>
+            <td {style}>Vd_t1, м3</td>
+            <td {style}>Vod_t1, м3</td>
+            <td {style}>Pad_t1, МПа</td>
+            </tr>");
+                        style = "style=\"text-align:right;\"";
+                        rows = new List<string>();
 
-            foreach (var to in tod)
-            {
-                var row = $@"<tr>
-<td {style}>{to.Key:dd.MM.yyyy HH:mm}</td>
-<td {style}>{to.Value:0.00}</td>
-<td {style}>{Td[to.Key]:0.00}</td>
-<td {style}>{Md[to.Key]:0.00}</td>
-<td {style}>{Vd[to.Key]:0.00}</td>
-<td {style}>{Vod[to.Key]:0.00}</td>
-<td {style}>{Pad[to.Key]:0.00}</td>
-</tr>";
-                rows.Add(row);
-            }
+                        foreach (var to in tod)
+                        {
+                            var row = $@"<tr>
+            <td {style}>{to.Key:dd.MM.yyyy HH:mm}</td>
+            <td {style}>{to.Value:0.00}</td>
+            <td {style}>{Td[to.Key]:0.00}</td>
+            <td {style}>{Md[to.Key]:0.00}</td>
+            <td {style}>{Vd[to.Key]:0.00}</td>
+            <td {style}>{Vod[to.Key]:0.00}</td>
+            <td {style}>{Pad[to.Key]:0.00}</td>
+            </tr>";
+                            rows.Add(row);
+                        }
 
-            tmp = tmp.Replace("##RowsDayTable##", string.Join("\r\n", rows));
-//--------------------
-            tmp = tmp.Replace("##HeaderMonthTable##",
-$@"<tr>
-<td {style}>Tom_t1, ч</td>
-<td {style}>Tm_t1, °C</td>
-<td {style}>Mm_t1, кг</td>
-<td {style}>Vm_t1, м3</td>
-<td {style}>Vom_t1, м3</td>
-<td {style}>Pam_t1, МПа</td>
-</tr>");
-            style = "style=\"text-align:right;\"";
-            rows = new List<string>();
+                        tmp = tmp.Replace("##RowsDayTable##", string.Join("\r\n", rows));
+            //--------------------
+                        tmp = tmp.Replace("##HeaderMonthTable##",
+            $@"<tr>
+            <td {style}>Tom_t1, ч</td>
+            <td {style}>Tm_t1, °C</td>
+            <td {style}>Mm_t1, кг</td>
+            <td {style}>Vm_t1, м3</td>
+            <td {style}>Vom_t1, м3</td>
+            <td {style}>Pam_t1, МПа</td>
+            </tr>");
+                        style = "style=\"text-align:right;\"";
+                        rows = new List<string>();
 
-            foreach (var to in tom)
-            {
-                var row = $@"<tr>
-<td {style}>{to.Key:dd.MM.yyyy HH:mm}</td>
-<td {style}>{to.Value:0.00}</td>
-<td {style}>{Tm[to.Key]:0.00}</td>
-<td {style}>{Mm[to.Key]:0.00}</td>
-<td {style}>{Vm[to.Key]:0.00}</td>
-<td {style}>{Vom[to.Key]:0.00}</td>
-<td {style}>{Pam[to.Key]:0.00}</td>
-</tr>";
-                rows.Add(row);
-            }
+                        foreach (var to in tom)
+                        {
+                            var row = $@"<tr>
+            <td {style}>{to.Key:dd.MM.yyyy HH:mm}</td>
+            <td {style}>{to.Value:0.00}</td>
+            <td {style}>{Tm[to.Key]:0.00}</td>
+            <td {style}>{Mm[to.Key]:0.00}</td>
+            <td {style}>{Vm[to.Key]:0.00}</td>
+            <td {style}>{Vom[to.Key]:0.00}</td>
+            <td {style}>{Pam[to.Key]:0.00}</td>
+            </tr>";
+                            rows.Add(row);
+                        }
 
-            tmp = tmp.Replace("##RowsMonthTable##", string.Join("\r\n", rows));
+                        tmp = tmp.Replace("##RowsMonthTable##", string.Join("\r\n", rows));
 
-            File.WriteAllText("report.htm", tmp, Encoding.Default);
+                        File.WriteAllText("report.htm", tmp, Encoding.Default);
 
-            //Console.WriteLine("Press any key...");
-            //Console.ReadKey();
+                        //Console.WriteLine("Press any key...");
+                        //Console.ReadKey();
+
+            */
+
         }
 
         private static float FetchRegiser(byte node, byte func, ushort addr)

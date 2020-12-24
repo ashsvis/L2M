@@ -143,6 +143,40 @@ namespace ReportL2M
             }
         }
 
+        public bool ReplaceInto(string table, string field, DateTime time, float value)
+        {
+            using (var con = new SqlConnection(Connection))
+            {
+                try
+                {
+                    con.Open();
+                    var found = false;
+                    using (SqlCommand cmd = new SqlCommand($"SELECT COUNT(*) FROM[{table}] WHERE [Snaptime]=@Snaptime", con))
+                    {
+                        cmd.Parameters.AddWithValue("@Snaptime", time);
+                        found = (int)cmd.ExecuteScalar() > 0;
+                    }
+                    var sql = found
+                        ? $"UPDATE [{table}] SET [{field}]=@Value WHERE [Snaptime]=@Snaptime"
+                        : $"INSERT INTO [{table}] ([Snaptime], [{field}]) VALUES(@Snaptime, @Value)";
+                    using (SqlCommand cmd = new SqlCommand(sql, con))
+                    {
+                        cmd.Parameters.AddWithValue("@Value", value);
+                        cmd.Parameters.AddWithValue("@Snaptime", time);
+                        cmd.ExecuteNonQuery();
+                    }
+                    con.Close();
+                    LastError = "";
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    LastError = ex.Message;
+                    return false;
+                }
+            }
+        }
+
         public bool ReplaceInto(string table, Dictionary<string, object> columns)
         {
             using (var con = new SqlConnection(Connection))
@@ -187,20 +221,27 @@ namespace ReportL2M
                             {
                                 case "System.Int32":
                                 case "System.Byte":
-                                    values.Add(value.ToString());
+                                    values.Add($"{value}");
                                     break;
                                 case "System.DateTime":
                                     values.Add("'" + ((DateTime)value).ToString("yyyy-MM-dd HH:mm:ss.000") + "'");
+                                    break;
+                                case "System.Single":
+                                    values.Add(((float)value).ToString(System.Globalization.CultureInfo.GetCultureInfo("en-US")));
                                     break;
                                 default:
                                     values.Add("N'" + value.ToString().Replace("'", "°") + "'");
                                     break;
                             }
                         }
-                        sql = string.Format("INSERT INTO [{0}] ({1}) VALUES({2})",
-                                table.ToLower(), string.Join(", ", names), string.Join(", ", values));
+                        //sql = string.Format("INSERT INTO [{0}] ({1}) VALUES({2})",
+                        //        table.ToLower(), string.Join(", ", names), string.Join(", ", values));
+                        sql = string.Format($"INSERT INTO [{table.ToLower()}] ([Snaptime],[M]) VALUES(@Snaptime, @M)");
+
                         using (SqlCommand cmd = new SqlCommand(sql, con))
                         {
+                            cmd.Parameters.AddWithValue("@Snaptime", (DateTime)columns["Snaptime"]);
+                            cmd.Parameters.AddWithValue("@M", (float)columns["M"]);
                             cmd.ExecuteNonQuery();
                         }
                     }
